@@ -1,0 +1,143 @@
+<!DOCUMENT html>
+<html lang="en">
+<head>
+	<title>Cool</title>
+	<link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
+	<script src="jquery/dist/jquery.min.js"></script>
+	<script src="bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+
+<style>
+#container{
+	height:100%;
+	width:auto;
+	white-space:nowrap;
+	overflow:hidden;
+	position:relative;
+	}
+#editor{
+	height: 30%;
+	min-height: 30vh;
+	width: 50%;
+	display: inline-block;
+	}
+#output{
+	height: 30%;
+	min-height: 30vh;
+	resize: none;
+	}
+#input{
+	height: 30%;
+	min-height: 30vh;
+	resize: none;
+	}
+</style>
+
+<body>
+
+
+<div id="container">
+<div style="display:flex">
+	<div class="col-lg-6" style="display:inline-flex;">
+		<h4 style="margin-top: 0px;margin-bottom: 0px;">Select Programming Language:</h4>
+		&nbsp;
+		<select id="selection" onchange="seteditor()">
+			<option value="python3">Python 3.5.3</option>
+			<option value="python2">Python 2.7.13</option>
+			<option value="java">Java 1.8.0</option>
+			<option value="c">C (gcc 6.3.0)</option>
+			<option value="cpp">C++ (gcc 6.3.0)</option>
+		</select>
+	</div>
+	&nbsp;
+	<div class="col-lg-2">
+		<h4 style="margin-top: 0px;margin-bottom: 0px;">Input:</h4>
+	</div>
+	&nbsp;
+	<div class="col-lg-2">
+		<h4 style="margin-top: 0px;margin-bottom: 0px;">Output:</h4>
+	</div>
+</div>
+	<div id="editor" class="col-lg-6"></div>
+	<textarea id="input" class="col-lg-2" placeholder="Inputs Here..."></textarea>
+	<textarea readonly id="output" class="col-lg-2" placeholder="Output Here.."></textarea>
+	<div style="display:flex;width: 100%;">
+		<div class="col-sm-6" align="right">
+			<button type="button" onclick="submit()">Execute</button>
+		</div>
+		<div class="col-sm-6" style="display: flex">
+			<h4 style="margin-top: 0px;margin-bottom: 0px;">Status:</h4>
+			&nbsp;
+			<h4 style="margin-top: 0px;margin-bottom: 0px;" id="status"></h4>
+		</div>
+	</div>
+</div>
+
+<script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+	var temp=0;
+	var arr=[];
+	window.ep=ace.edit("editor");
+	ep.getSession().setUseWrapMode(true);
+	ep.setOption("indentedSoftWrap", false);
+	ep.setShowPrintMargin(false);
+	ep.setFontSize(16);
+	ep.setTheme("ace/theme/monokai");
+	ep.session.setMode("ace/mode/python");
+	function seteditor(){
+		arr[temp]=ep.getSession().getValue();
+		var x = document.getElementById("selection").value;
+		if(x=="python2" || x=="python3"){
+			if(x=="python3")
+				temp=0;
+			else
+				temp=1;
+			ep.session.setMode("ace/mode/python");
+		}
+		else if(x=="c" || x=="cpp"){
+			if(x=="cpp")
+				temp=2;
+			else
+				temp=3;
+			ep.session.setMode("ace/mode/c_cpp");
+		}
+		else if(x=="java"){
+			temp=4;
+			ep.session.setMode("ace/mode/java");
+		}
+		if(arr[temp])
+			ep.setValue(arr[temp]);
+		else
+			ep.setValue("");
+	}
+	seteditor();
+	function submit(){
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "compile/"+document.getElementById("selection").value, false);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			
+			xhr.onreadystatechange = function() {
+				if(this.responseText=="Wrong Selection"){
+						document.getElementById("status").innerHTML=this.responseText.fontcolor("red");
+					}
+				else{
+						var rest=JSON.parse(this.responseText);
+						if(rest.result_output.errorType){
+							var temp=rest.result_output.errorType+" Error";
+							document.getElementById("status").innerHTML=temp.fontcolor("red");
+							document.getElementById('output').value=rest.result_output.stderr;
+						}
+						else{
+							document.getElementById("status").innerHTML="Successfully Compiled".fontcolor("green");
+							document.getElementById('output').value=rest.result_output.stdout;
+						}
+					}
+				}
+		xhr.send(JSON.stringify({carrier : ep.getSession().getValue(), carrier_ip : document.getElementById("input").value}));
+	}
+	/*str=ep.getSession().getValue();
+	ep.getSession().on('change', function () {
+			str=ep.getSession().getValue(); 
+			});*/
+</script>
+</body>
