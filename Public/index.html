@@ -113,11 +113,10 @@
 	seteditor();
 	function submit(){
 			var xhr = new XMLHttpRequest();
-			xhr.open("POST", "compile/"+document.getElementById("selection").value, false);
+			xhr.open("POST", "compile/"+document.getElementById("selection").value, true);
 			xhr.setRequestHeader('Content-Type', 'application/json');
 			
-			//xhr.onreadystatechange = function() {
-			  xhr.onload = function() {
+			xhr.onreadystatechange = function() {
 				if(this.responseText=="Wrong Selection"){
 						document.getElementById("status").innerHTML=this.responseText.fontcolor("red");
 					}
