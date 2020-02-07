@@ -24,11 +24,10 @@ app.post('/compile/:feedsId',(req,res) => {
 				var n=result.stderr.search("-")+1;
 				result.stderr=result.stderr.substring(n);
 			}
-			console.log(result);
 			res.end(JSON.stringify({ result_output: result }));
 		})
 		.catch(err => {
-			console.log(err);
+			res.end("Server Error");
 		});
 	}
 	else if(req.params.feedsId=="python3"){
@@ -38,11 +37,10 @@ app.post('/compile/:feedsId',(req,res) => {
 				var n=result.stderr.search("-")+1;
 				result.stderr=result.stderr.substring(n);
 			}
-			console.log(result);
 			res.end(JSON.stringify({ result_output: result }));
 		})
 		.catch(err => {
-			console.log(err);
+			res.end("Server Error");
 		});
 	}
 	else if(req.params.feedsId=="cpp"){
@@ -52,11 +50,10 @@ app.post('/compile/:feedsId',(req,res) => {
 				var n=result.stderr.search("-")+1;
 				result.stderr=result.stderr.substring(n);
 			}
-			console.log(result);
 			res.end(JSON.stringify({ result_output: result }));
 		})
 		.catch(err => {
-			console.log(err);
+			res.end("Server Error");
 		});
 	}
 	else if(req.params.feedsId=="c"){
@@ -66,11 +63,10 @@ app.post('/compile/:feedsId',(req,res) => {
 				var n=result.stderr.search("-")+1;
 				result.stderr=result.stderr.substring(n);
 			}
-			console.log(result);
 			res.end(JSON.stringify({ result_output: result }));
 		})
 		.catch(err => {
-			console.log(err);
+			res.end("Server Error");
 		});
 	}
 	else if(req.params.feedsId=="java"){
@@ -80,11 +76,10 @@ app.post('/compile/:feedsId',(req,res) => {
 				var n=result.stderr.search("-")+1;
 				result.stderr=result.stderr.substring(n);
 			}
-			console.log(result);
 			res.end(JSON.stringify({ result_output: result }));
 		})
 		.catch(err => {
-			console.log(err);
+			res.end("Server Error");
 		});
 	}
 	else{
