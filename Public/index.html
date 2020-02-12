@@ -5,6 +5,8 @@
 	<link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
 	<script src="jquery/dist/jquery.min.js"></script>
 	<script src="bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="webrtc-adapter/out/adapter.js"></script>
+	<script src="https://unpkg.com/peerjs@1.0.0/dist/peerjs.min.js"></script>
 </head>
 
 <style>
@@ -16,8 +18,8 @@
 	position:relative;
 	}
 #editor{
-	height: 30%;
-	min-height: 30vh;
+	height: 80%;
+	min-height: 80vh;
 	width: 50%;
 	display: inline-block;
 	}
@@ -31,6 +33,11 @@
 	min-height: 30vh;
 	resize: none;
 	}
+.errorHighlight{
+  position:absolute;
+  z-index:20;
+  background-color:#F4B9B7;
+}
 </style>
 
 <body>
@@ -63,7 +70,7 @@
 	<textarea readonly id="output" class="col-lg-2" placeholder="Output Here.."></textarea>
 	<div style="display:flex;width: 100%;">
 		<div class="col-sm-6" align="right">
-			<button type="button" onclick="submit()">Execute</button>
+			<button id="exec" type="button" onclick="submit()">Execute</button>
 		</div>
 		<div class="col-sm-6" style="display: flex">
 			<h4 style="margin-top: 0px;margin-bottom: 0px;">Status:</h4>
@@ -75,7 +82,21 @@
 
 <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
-	var temp=0;
+	/*var parameters = location.search.substring(1).split("&");
+	var peer;
+	var conn;
+	var l,p;
+	//var conn = peer.connect('dinesh21', {host: 'localhost', port: 3000, path: '/api'});
+	if(parameters[0]){
+		var temp = parameters[0].split("=");
+		l = unescape(temp[1]);
+		temp = parameters[1].split("=");
+		p = unescape(temp[1]);
+		peer = new Peer(l, {host: 'localhost', port: 3000, path: '/api'});
+		conn = peer.connect(p, {host: 'localhost', port: 3000, path: '/api'});
+	}*/
+		
+	var temp;
 	var arr=[];
 	window.ep=ace.edit("editor");
 	ep.getSession().setUseWrapMode(true);
@@ -83,44 +104,51 @@
 	ep.setShowPrintMargin(false);
 	ep.setFontSize(16);
 	ep.setTheme("ace/theme/monokai");
+	//ep.setTheme("ace/theme/clouds");
 	ep.session.setMode("ace/mode/python");
 	function seteditor(){
-		arr[temp]=ep.getSession().getValue();
+		//arr[temp]=ep.getSession().getValue();
 		var x = document.getElementById("selection").value;
 		if(x=="python2" || x=="python3"){
-			if(x=="python3")
+			/*if(x=="python3")
 				temp=0;
 			else
-				temp=1;
+				temp=1;*/
 			ep.session.setMode("ace/mode/python");
 		}
 		else if(x=="c" || x=="cpp"){
-			if(x=="cpp")
+			/*if(x=="cpp")
 				temp=2;
 			else
 				temp=3;
+			*/
 			ep.session.setMode("ace/mode/c_cpp");
 		}
 		else if(x=="java"){
-			temp=4;
+			//temp=4;
 			ep.session.setMode("ace/mode/java");
 		}
+		/*
 		if(arr[temp])
-			ep.setValue(arr[temp]);
+			ep.setValue(arr[temp],1);
 		else
-			ep.setValue("");
+			ep.setValue("",-1);
+		*/
+		document.getElementById("editor").childNodes[0].focus();
 	}
 	seteditor();
+	document.getElementById("editor").childNodes[0].focus();
 	function submit(){
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", "compile/"+document.getElementById("selection").value, true);
 			xhr.setRequestHeader('Content-Type', 'application/json');
 			
-			xhr.onreadystatechange = function() {
-				if(this.responseText=="Wrong Selection" || this.responseText=="Server Error, Try Again" ){
+			xhr.onload = function() {
+				if(this.responseText=="Wrong Selection" || this.responseText=="Server Error" ){
 						document.getElementById("status").innerHTML=this.responseText.fontcolor("red");
 					}
 				else{
+						console.log(this.responseText);
 						var rest=JSON.parse(this.responseText);
 						if(rest.result_output.errorType){
 							var temp=rest.result_output.errorType+" Error";
@@ -135,9 +163,99 @@
 				}
 		xhr.send(JSON.stringify({carrier : ep.getSession().getValue(), carrier_ip : document.getElementById("input").value}));
 	}
+	/*
+	ep.on("change", function(e){
+		conn = peer.connect(p, {host: 'localhost', port: 3000, path: '/api'});
+		conn.send(e);
+		temp=e;
+		console.log(e);
+	});
+	peer.on('connection', (conn) => {
+		conn.on('data', (data) => {
+			ep.gotoLine(data.start.row+1, data.start.column, 1);
+		if(data.action=="insert")
+			ep.insert(data.lines.join("\n"));
+		else if(data.action=="remove")
+			ep.remove({start:temp.start,end:temp.end});
+		// Will print 'hi!'
+		console.log(data);
+		});
+	});
+	ep.on("changeMode", function(e){
+		console.log(e);
+	});
+	ep.on("changeFrontMarker", function(e){
+		
+	})
+
 	/*str=ep.getSession().getValue();
 	ep.getSession().on('change', function () {
 			str=ep.getSession().getValue(); 
 			});*/
 </script>
+	<script>
+		var yup=true;
+		var yup1=true;
+		var interviewer=true
+		var parameters = location.search.substring(1).split("&");
+        var conn;
+        var temp = parameters[0].split("=");
+		l = unescape(temp[1]);
+		temp = parameters[1].split("=");
+		p = unescape(temp[1]);
+		var peer = new Peer(l,{host: 'localhost', port: 3000, path: '/api'});
+		var c = peer.connect(p);
+        peer.on('open', function (id) {
+            //$('#pid').text(id);
+			console.log(id);
+        });
+        peer.on('connection', connect);
+        //CONNECT
+        function connect(c) {
+            conn = c;
+            console.log('in connect', conn.peer);
+            //$('#rid').val(conn.peer);
+            //$('#rid').prop('disabled', true);
+            //$('#progbar').width('100%');
+            //document.getElementById('status').innerText = "Connected";
+            conn.on('data', function (data) {
+					yup=false
+					ep.gotoLine(data.start.row+1, data.start.column, 1);
+					if(data.action=="insert")
+						ep.insert(data.lines.join("\n"));
+					else if(data.action=="remove")
+						ep.session.remove({start:data.start,end:data.end});
+						// Will print 'hi!'
+						console.log(data);
+					yup=true
+                //$('#inputText').val($('#inputText').val() + data);
+            });
+        }
+		/*ep.on("changeSelection", function(){
+			console.log({mouse : ep.getCursorPosition()});
+		});*/
+        ep.on("change", function(e){
+			if(yup){
+            console.log(e);
+            conn.send(e);
+			}
+        });
+		ep.on("paste", function(e){
+			e.text="";
+			console.log(e);
+		});
+		ep.on("copy", function(e){
+			console.log(e);
+			e.text="";
+		});
+		
+        c.on('open', function () {
+			interviewer=false;
+            console.log(c);
+            connect(c);
+        });
+
+    </script>
+</script>
+<!--<script src="connection.js" type="text/javascript" charset="utf-8"></script>-->
 </body>

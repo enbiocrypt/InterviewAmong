@@ -3,8 +3,13 @@ const express = require('express'),
 const {c, cpp, node, python, java} = require('compile-run');
 const bodyParser = require('body-parser');
 const hostname = 'localhost';
-const app = express();
+var app = express();
+var ExpressPeerServer = require('peer').ExpressPeerServer;
 port = process.env.PORT || 3000;
+var options = {
+	/*debug: true,*/
+    allow_discovery: true
+}
 
 app.set('view engine','ejs');
 app.use(bodyParser.json());      
@@ -87,8 +92,20 @@ app.post('/compile/:feedsId',(req,res) => {
 	}
 });
 
-const server = http.createServer(app);
+var server = http.createServer(app);
 
 server.listen(port, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
+
+app.use('/api', ExpressPeerServer(server, options));
+
+server.on('connection', function(id) {
+    console.log(id)
+	console.log(server._clients)
+});
+/*
+server.on('disconnect', function(id) {
+    console.log(id + "deconnected")
+});
+*/
