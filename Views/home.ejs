@@ -95,8 +95,6 @@
 		peer = new Peer(l, {host: 'localhost', port: 3000, path: '/api'});
 		conn = peer.connect(p, {host: 'localhost', port: 3000, path: '/api'});
 	}*/
-	var po=<%= port %>;
-	console.log(po);
 	var temp;
 	var arr=[];
 	window.ep=ace.edit("editor");
@@ -195,6 +193,7 @@
 			});*/
 </script>
 	<script>
+		var port1=<%= port %>;
 		var yup=true;
 		var yup1=true;
 		var interviewer=true

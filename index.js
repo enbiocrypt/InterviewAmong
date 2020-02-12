@@ -28,12 +28,12 @@ var options = {
 
 
 app.get('/',(req,res) => {
-	res.render('index',{port:port});
+	res.render('home',{port:port});
 	//res.sendFile(__dirname+'/Public/index.html');
 });
 
 app.get('/index',(req,res) => {
-	res.render('index',{port:port});
+	res.render('home',{port:port});
 	//res.sendFile(__dirname+'/Public/index.html');
 });
 
