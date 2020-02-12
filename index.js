@@ -1,15 +1,13 @@
 const express = require('express'),
      http = require('http');
+const fs = require('fs');
 const {c, cpp, node, python, java} = require('compile-run');
 const bodyParser = require('body-parser');
 const hostname = 'localhost';
 var app = express();
 var ExpressPeerServer = require('peer').ExpressPeerServer;
 port = process.env.PORT || 3000;
-var options = {
-	/*debug: true,*/
-    allow_discovery: true
-}
+
 
 app.set('view engine','ejs');
 app.use(bodyParser.json());      
@@ -17,12 +15,18 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/node_modules'));
 app.use(express.static(__dirname + '/Public'));
 
+var options = {
+	/*debug: true,*/
+    allow_discovery: true,
+	ssl: {
+		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
+		cert: fs.readFileSync(__dirname+'/Public/cert/certificate.crt')
+	}
+}
+
+
 app.get('/',(req,res) => {
 	res.sendFile(__dirname+'/Public/index.html');
-});
-
-app.get('/.well-known/acme-challenge/tOMPw9kKmcO5JbxcjOwDSTTRcbQDualCMGEA4QtD86s',(req,res) => {
-	res.sendFile(__dirname+'/.well-known/acme-challenge/tOMPw9kKmcO5JbxcjOwDSTTRcbQDualCMGEA4QtD86s');
 });
 
 app.post('/compile/:feedsId',(req,res) => {
