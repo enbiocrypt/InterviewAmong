@@ -32,7 +32,7 @@ app.get('/',(req,res) => {
 	//res.sendFile(__dirname+'/Public/index.html');
 });
 
-app.get('/index',(req,res) => {
+app.get('/home',(req,res) => {
 	res.render('home',{port:port});
 	//res.sendFile(__dirname+'/Public/index.html');
 });
