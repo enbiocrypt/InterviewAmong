@@ -21,6 +21,10 @@ app.get('/',(req,res) => {
 	res.sendFile(__dirname+'/Public/index.html');
 });
 
+app.get('/.well-known/acme-challenge/tOMPw9kKmcO5JbxcjOwDSTTRcbQDualCMGEA4QtD86s',(req,res) => {
+	res.sendFile(__dirname+'/.well-known/acme-challenge/tOMPw9kKmcO5JbxcjOwDSTTRcbQDualCMGEA4QtD86s');
+});
+
 app.post('/compile/:feedsId',(req,res) => {
 	if(req.params.feedsId=="python2"){
 		let resultPromise = python.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
