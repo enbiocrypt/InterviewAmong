@@ -1,6 +1,7 @@
 const express = require('express'),
      http = require('http');
 const fs = require('fs');
+const session = require('express-session');
 const {c, cpp, node, python, java} = require('compile-run');
 const bodyParser = require('body-parser');
 const hostname = 'localhost';
@@ -22,13 +23,11 @@ var options = {
 	ssl: {
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
 		cert: fs.readFileSync(__dirname+'/Public/cert/certificate.crt')
-	},
-	secure : false
+	}
 }
 
 
 app.get('/',(req,res) => {
-	
 	res.render('index',{port:port});
 	//res.sendFile(__dirname+'/Public/index.html');
 });

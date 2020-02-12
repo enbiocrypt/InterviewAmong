@@ -95,7 +95,8 @@
 		peer = new Peer(l, {host: 'localhost', port: 3000, path: '/api'});
 		conn = peer.connect(p, {host: 'localhost', port: 3000, path: '/api'});
 	}*/
-		
+	var po=<%= port %>;
+	console.log(po);
 	var temp;
 	var arr=[];
 	window.ep=ace.edit("editor");
@@ -203,7 +204,7 @@
 		l = unescape(temp[1]);
 		temp = parameters[1].split("=");
 		p = unescape(temp[1]);
-		var peer = new Peer(l,{host: 'localhost', port: <%= port %>, path: '/api'});
+		var peer = new Peer(l,{host: 'localhost', port: 3000, path: '/api'});
 		var c = peer.connect(p);
         peer.on('open', function (id) {
             //$('#pid').text(id);
