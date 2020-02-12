@@ -22,7 +22,8 @@ var options = {
 	ssl: {
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
 		cert: fs.readFileSync(__dirname+'/Public/cert/certificate.crt')
-	}
+	},
+	secure : false
 }
 
 
