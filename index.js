@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/node_modules'));
 app.use(express.static(__dirname + '/Public'));
+app.use(express.static(__dirname + '/Views'));
 
 var options = {
 	/*debug: true,*/
@@ -26,7 +27,14 @@ var options = {
 
 
 app.get('/',(req,res) => {
-	res.sendFile(__dirname+'/Public/index.html');
+	
+	res.render('index',{port:port});
+	//res.sendFile(__dirname+'/Public/index.html');
+});
+
+app.get('/index',(req,res) => {
+	res.render('index',{port:port});
+	//res.sendFile(__dirname+'/Public/index.html');
 });
 
 app.post('/compile/:feedsId',(req,res) => {
