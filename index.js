@@ -1,11 +1,11 @@
 const express = require('express'),
-     http = require('https');
+     http = require('http');
 const fs = require('fs');
 const session = require('express-session');
 const {c, cpp, node, python, java} = require('compile-run');
 const bodyParser = require('body-parser');
 const hostname = 'localhost';
-var http = require('http');
+var https = require('https');
 var ExpressPeerServer = require('peer').ExpressPeerServer;
 var options = {
 	debug: true,
