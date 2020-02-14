@@ -6,8 +6,7 @@
 	<script src="jquery/dist/jquery.min.js"></script>
 	<script src="bootstrap/dist/js/bootstrap.min.js"></script>
 	<script src="webrtc-adapter/out/adapter.js"></script>
-	<!--<script src="https://unpkg.com/peerjs@1.0.0/dist/peerjs.min.js"></script>-->
-	<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
+	<script src="https://unpkg.com/peerjs@1.0.0/dist/peerjs.min.js"></script>
 </head>
 
 <style>
@@ -204,8 +203,8 @@
 		l = unescape(temp[1]);
 		temp = parameters[1].split("=");
 		p = unescape(temp[1]);
-		var peer = new Peer(l,{host:'enbiocrypts.nl',path:'/api', port:port1})
-		//var peer = new Peer(l,{host: 'localhost', port: port1, path: '/api'});
+		//var peer = new Peer(l,{host:'enbiocrypts.nl',path:'/api', port:port1})
+		var peer = new Peer(l,{host: 'enbiocrypts.nl', port: 443, path: '/api'});
 		var c = peer.connect(p);
         peer.on('open', function (id) {
             //$('#pid').text(id);

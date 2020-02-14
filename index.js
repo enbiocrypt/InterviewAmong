@@ -21,7 +21,7 @@ var app = express();
 port = process.env.PORT || 3000;
 
 
-//var httpsServer = https.createServer(sslop, app);
+var httpsServer = https.createServer(sslop, app);
 
 var server = http.createServer(app).listen(port, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
@@ -36,7 +36,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/node_modules'));
 app.use(express.static(__dirname + '/Public'));
 app.use(express.static(__dirname + '/Views'));
-app.use(cors());
 app.use('/api', peer);
 
 
