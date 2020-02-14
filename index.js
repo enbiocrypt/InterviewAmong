@@ -5,7 +5,7 @@ const session = require('express-session');
 const {c, cpp, node, python, java} = require('compile-run');
 const bodyParser = require('body-parser');
 const hostname = 'localhost';
-var https = require('https');
+var http = require('http');
 var ExpressPeerServer = require('peer').ExpressPeerServer;
 var options = {
 	debug: true,
@@ -19,7 +19,7 @@ var options = {
 var app = express();
 port = process.env.PORT || 3000;
 
-var server = https.createServer(app).listen(port, () => {
+var server = http.createServer(app).listen(port, () => {
   console.log(`Server running at https://${hostname}:${port}/`);
 });
 
