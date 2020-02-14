@@ -12,7 +12,8 @@ var options = {
     allow_discovery: true,
 	ssl:{
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
-		cert: fs.readFileSync(__dirname+'/Public/cert/certificate.crt')
+		cert: fs.readFileSync(__dirname+'/Public/cert/certificate.crt'),
+		ca: fs.readFileSync(__dirname+'/Public/cert/ca_bundle.crt')
 	}
 };
 var app = express();
