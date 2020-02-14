@@ -22,13 +22,16 @@ var server = http.createServer(app).listen(port, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
+var peer = ExpressPeerServer(server, options);
+
+
 app.set('view engine','ejs');
 app.use(bodyParser.json());      
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/node_modules'));
 app.use(express.static(__dirname + '/Public'));
 app.use(express.static(__dirname + '/Views'));
-app.use('/api', ExpressPeerServer(server, options));
+app.use('/api', peer);
 
 
 
@@ -122,6 +125,10 @@ app.post('/compile/:feedsId',(req,res) => {
 	else{
 		res.end("Wrong Selection");
 	}
+});
+
+peer.on('connection', function (id) {
+console.log('user with ', id, 'connected');
 });
 
 
