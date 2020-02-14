@@ -135,7 +135,9 @@ app.post('/compile/:feedsId',(req,res) => {
 peer.on('connection', function (id) {
 console.log('user with ', id, 'connected');
 });
-
+peer.on('disconnect', function(id) {
+    console.log(id + "deconnected")
+});
 
 /*
 app.use('/api', ExpressPeerServer(server, options));
