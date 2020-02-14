@@ -10,11 +10,10 @@ var ExpressPeerServer = require('peer').ExpressPeerServer;
 var options = {
 	debug: true,
     allow_discovery: true,
-	/*ssl:{
+	ssl:{
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
 		cert: fs.readFileSync(__dirname+'/Public/cert/certificate.crt'),
-		ca: fs.readFileSync(__dirname+'/Public/cert/ca_bundle.crt')
-	}*/
+	}
 };
 const sslop = {
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
@@ -23,8 +22,8 @@ const sslop = {
 var app = express();
 port = process.env.PORT || 3000;
 
-var server = https.createServer(sslop,app).listen(port, () => {
-  console.log(`Server running at https://${hostname}:${port}/`);
+var server = http.createServer(sslop,app).listen(port, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
 });
 
 var peer = ExpressPeerServer(server, options);
