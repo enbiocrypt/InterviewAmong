@@ -21,9 +21,9 @@ var app = express();
 port = process.env.PORT || 3000;
 
 
-var httpsServer = https.createServer(app,sslop);
+var httpsServer = https.createServer(app);
 
-var server = https.createServer(app).listen(port, () => {
+var server = http.createServer(app).listen(port, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
