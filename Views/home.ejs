@@ -203,8 +203,8 @@
 		l = unescape(temp[1]);
 		temp = parameters[1].split("=");
 		p = unescape(temp[1]);
-		//var peer = new Peer(l,{host:'enbiocrypts.nl',path:'/api', secure:true, port:port1})
-		var peer = new Peer(l,{host: 'localhost', port: port1, path: '/api'});
+		var peer = new Peer(l,{host:'enbiocrypts.nl',path:'/api', port:port1})
+		//var peer = new Peer(l,{host: 'localhost', port: port1, path: '/api'});
 		var c = peer.connect(p);
         peer.on('open', function (id) {
             //$('#pid').text(id);

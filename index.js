@@ -21,13 +21,13 @@ var app = express();
 port = process.env.PORT || 3000;
 
 
-var httpsServer = https.createServer(sslop, app);
+//var httpsServer = https.createServer(sslop, app);
 
 var server = http.createServer(app).listen(port, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
-var peer = ExpressPeerServer(httpsServer.listen(80), options);
+var peer = ExpressPeerServer(server, options);
 
 
 app.set('view engine','ejs');
