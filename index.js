@@ -10,17 +10,17 @@ var ExpressPeerServer = require('peer').ExpressPeerServer;
 var options = {
 	debug: true,
     allow_discovery: true,
-	ssl:{
+	/*ssl:{
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
 		cert: fs.readFileSync(__dirname+'/Public/cert/certificate.crt'),
 		ca: fs.readFileSync(__dirname+'/Public/cert/ca_bundle.crt')
-	}
+	}*/
 };
 var app = express();
 port = process.env.PORT || 3000;
 
 var server = https.createServer(app).listen(port, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+  console.log(`Server running at https://${hostname}:${port}/`);
 });
 
 var peer = ExpressPeerServer(server, options);
