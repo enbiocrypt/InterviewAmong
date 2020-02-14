@@ -7,26 +7,27 @@ const bodyParser = require('body-parser');
 const hostname = 'localhost';
 var https = require('https');
 var ExpressPeerServer = require('peer').ExpressPeerServer;
-var options = {
-	debug: true,
-    allow_discovery: true,
-	ssl:{
-		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
-		cert: fs.readFileSync(__dirname+'/Public/cert/certificate.crt'),
-	}
-};
 const sslop = {
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
 		cert: fs.readFileSync(__dirname+'/Public/cert/certificate.crt'),
 	};
+var options = {
+	debug: true,
+    allow_discovery: true,
+	ssl: sslop
+};
+
 var app = express();
 port = process.env.PORT || 3000;
 
-var server = http.createServer(sslop,app).listen(port, () => {
+
+var httpsServer = https.createServer(sslop, app);
+
+var server = http.createServer(app).listen(port, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
-var peer = ExpressPeerServer(server, options);
+var peer = ExpressPeerServer(httpsServer.listen(80), options);
 
 
 app.set('view engine','ejs');
