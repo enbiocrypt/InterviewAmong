@@ -1,5 +1,5 @@
 const express = require('express'),
-     http = require('http');
+     http = require('https');
 const fs = require('fs');
 const session = require('express-session');
 const {c, cpp, node, python, java} = require('compile-run');
@@ -19,7 +19,7 @@ var options = {
 var app = express();
 port = process.env.PORT || 3000;
 
-var server = http.createServer(app).listen(port, () => {
+var server = https.createServer(app).listen(port, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
