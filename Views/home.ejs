@@ -7,6 +7,7 @@
 	<script src="bootstrap/dist/js/bootstrap.min.js"></script>
 	<script src="webrtc-adapter/out/adapter.js"></script>
 	<!--<script src="https://unpkg.com/peerjs@1.0.0/dist/peerjs.min.js"></script>-->
+	<script src="socket.io-client/dist/socket.io.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
 </head>
 
@@ -209,6 +210,10 @@
 		l = unescape(temp[1]);
 		temp = parameters[1].split("=");
 		p = unescape(temp[1]);
+		var sock_client = io.connect('https://enbiocrypts.nl');
+		sock_client.on('connect', function() {
+			console.log(`sock_client connect`);
+		});
 		//var peer = new Peer(l,{host:'localhost',path:'/api', port:port1})
 		var peer = new Peer(l,{host: 'enbiocrypts.nl', port: 443, path: '/api'});
 		var c = peer.connect(p);

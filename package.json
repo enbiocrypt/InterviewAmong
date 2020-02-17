@@ -17,8 +17,9 @@
     "express-session": "^1.17.0",
     "fix-path": "^2.1.0",
     "jquery": "^3.4.1",
-    "peer": "^0.2.8",
+    "peer": "^0.2.10",
     "python-shell": "^1.0.8",
+    "socket.io": "^2.3.0",
     "webrtc-adapter": "^7.5.0"
   }
 }
