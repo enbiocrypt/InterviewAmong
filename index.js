@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const hostname = 'localhost';
 var https = require('https');
 const ExpressPeerServer = require('peer').ExpressPeerServer;
-const socket_io = require('socket.io');
+//const socket_io = require('socket.io');
 
 
 const sslop = {
@@ -162,11 +162,12 @@ peer.on('disconnect', function(id) {
     console.log(id + "deconnected")
 });
 
+/*
 var rec_sockio = socket_io.listen(server);
 rec_sockio.sockets.on('connection', function(socket) {
 	console.log('socket is connected', socket.id);
 });
-
+*/
 /*
 app.use('/api', ExpressPeerServer(server, options));
 

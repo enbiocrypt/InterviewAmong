@@ -210,10 +210,10 @@
 		l = unescape(temp[1]);
 		temp = parameters[1].split("=");
 		p = unescape(temp[1]);
-		var sock_client = io.connect('https://enbiocrypts.nl');
+		/*var sock_client = io.connect('https://enbiocrypts.nl');
 		sock_client.on('connect', function() {
 			console.log(`sock_client connect`);
-		});
+		});*/
 		//var peer = new Peer(l,{host:'localhost',path:'/api', port:port1})
 		var peer = new Peer(l,{host: 'enbiocrypts.nl', port: 443, path: '/api'});
 		var c = peer.connect(p);
