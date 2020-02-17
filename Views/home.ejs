@@ -55,6 +55,7 @@
 			<option value="java">Java 1.8.0</option>
 			<option value="c">C (gcc 6.3.0)</option>
 			<option value="cpp">C++ (gcc 6.3.0)</option>
+			<option value="javascript">JavaScript</option>
 		</select>
 	</div>
 	&nbsp;
@@ -127,6 +128,10 @@
 		else if(x=="java"){
 			//temp=4;
 			ep.session.setMode("ace/mode/java");
+		}
+		else if(x=="javascript"){
+			//temp=4;
+			ep.session.setMode("ace/mode/javascript");
 		}
 		/*
 		if(arr[temp])
@@ -204,8 +209,8 @@
 		l = unescape(temp[1]);
 		temp = parameters[1].split("=");
 		p = unescape(temp[1]);
-		//var peer = new Peer(l,{host:'localhost',path:'/api', port:port1 , secure:false})
-		var peer = new Peer(l,{host: 'enbiocrypts.nl', port: 443, path: '/api' , secure:false});
+		//var peer = new Peer(l,{host:'localhost',path:'/api', port:port1})
+		var peer = new Peer(l,{host: 'enbiocrypts.nl', port: 443, path: '/api'});
 		var c = peer.connect(p);
         peer.on('open', function (id) {
             //$('#pid').text(id);
@@ -242,10 +247,11 @@
             conn.send(e);
 			}
         });
+		/*
 		ep.on("paste", function(e){
 			e.text="";
 			console.log(e);
-		});
+		});*/
 		ep.on("copy", function(e){
 			console.log(e);
 			e.text="";
@@ -258,6 +264,5 @@
         });
 
     </script>
-</script>
-<script src="connection.js" type="text/javascript" charset="utf-8"></script>-->
+<!--<script src="connection.js" type="text/javascript" charset="utf-8"></script>-->
 </body>

@@ -7,6 +7,9 @@ const bodyParser = require('body-parser');
 const hostname = 'localhost';
 var https = require('https');
 var ExpressPeerServer = require('peer').ExpressPeerServer;
+
+
+
 const sslop = {
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
 		cert: fs.readFileSync(__dirname+'/Public/cert/certificate.crt'),
@@ -121,6 +124,20 @@ app.post('/compile/:feedsId',(req,res) => {
 				var n=result.stderr.search("-")+1;
 				result.stderr=result.stderr.substring(n);
 			}
+			res.end(JSON.stringify({ result_output: result }));
+		})
+		.catch(err => {
+			res.end("Server Error");
+		});
+	}
+	else if(req.params.feedsId=="javascript"){
+		let resultPromise = node.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
+		resultPromise.then(result => {
+			if(result.stderr){
+				var n=result.stderr.search("-")+1;
+				result.stderr=result.stderr.substring(n);
+			}
+			console.log(result);
 			res.end(JSON.stringify({ result_output: result }));
 		})
 		.catch(err => {
