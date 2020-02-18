@@ -52,8 +52,8 @@ app.use('/api', peer);
 */
 
 app.get('/',(req,res) => {
-	res.render('home',{port:port});
-	//res.sendFile(__dirname+'/public/index.html');
+	//res.render('home',{port:port});
+	res.sendFile('index.html');
 });
 
 
