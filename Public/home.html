@@ -1,0 +1,289 @@
+
+<html>
+<head>
+	<title>Cool</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
+	<script src="jquery/dist/jquery.min.js"></script>
+	<script src="bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="webrtc-adapter/out/adapter.js"></script>
+	<!--<script src="https://unpkg.com/peerjs@1.0.0/dist/peerjs.min.js"></script>-->
+	<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
+</head>
+
+<style>
+#container{
+	height:100%;
+	width:auto;
+	white-space:nowrap;
+	overflow:hidden;
+	position:relative;
+	}
+#editor{
+	height: 80%;
+	min-height: 80vh;
+	width: 50%;
+	display: inline-block;
+	}
+#output{
+	height: 30%;
+	min-height: 30vh;
+	resize: none;
+	}
+#input{
+	height: 30%;
+	min-height: 30vh;
+	resize: none;
+	}
+.MyCursorClass {
+    position: absolute;
+    border-left: 2px solid gold;
+}
+</style>
+
+<body>
+
+
+<div id="container">
+<div style="display:flex">
+	<div class="col-lg-6" style="display:inline-flex;">
+		<h4 style="margin-top: 0px;margin-bottom: 0px;">Select Programming Language:</h4>
+		&nbsp;
+		<select id="selection" onchange="seteditor()">
+			<option value="python3">Python 3.5.3</option>
+			<option value="python2">Python 2.7.13</option>
+			<option value="java">Java 1.8.0</option>
+			<option value="c">C (gcc 6.3.0)</option>
+			<option value="cpp">C++ (gcc 6.3.0)</option>
+			<option value="javascript">JavaScript</option>
+		</select>
+	</div>
+	&nbsp;
+	<div class="col-lg-2">
+		<h4 style="margin-top: 0px;margin-bottom: 0px;">Input:</h4>
+	</div>
+	&nbsp;
+	<div class="col-lg-2">
+		<h4 style="margin-top: 0px;margin-bottom: 0px;">Output:</h4>
+	</div>
+</div>
+	<div id="editor" class="col-lg-6"></div>
+	<textarea id="input" class="col-lg-2" placeholder="Inputs Here..."></textarea>
+	<textarea readonly id="output" class="col-lg-2" placeholder="Output Here.."></textarea>
+	<div style="display:flex;width: 100%;">
+		<div class="col-sm-6" align="right">
+			<button id="exec" type="button" onclick="submit()">Execute</button>
+		</div>
+		<div class="col-sm-6" style="display: flex">
+			<h4 style="margin-top: 0px;margin-bottom: 0px;">Status:</h4>
+			&nbsp;
+			<h4 style="margin-top: 0px;margin-bottom: 0px;" id="status"></h4>
+		</div>
+	</div>
+</div>
+
+<script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+	/*var parameters = location.search.substring(1).split("&");
+	var peer;
+	var conn;
+	var l,p;
+	//var conn = peer.connect('dinesh21', {host: 'localhost', port: 3000, path: '/api'});
+	if(parameters[0]){
+		var temp = parameters[0].split("=");
+		l = unescape(temp[1]);
+		temp = parameters[1].split("=");
+		p = unescape(temp[1]);
+		peer = new Peer(l, {host: 'localhost', port: 3000, path: '/api'});
+		conn = peer.connect(p, {host: 'localhost', port: 3000, path: '/api'});
+	}*/
+	var temp;
+	var arr=[];
+	window.ep=ace.edit("editor");
+	ep.getSession().setUseWrapMode(true);
+	ep.setOption("indentedSoftWrap", false);
+	ep.setShowPrintMargin(false);
+	ep.setFontSize(16);
+	ep.setTheme("ace/theme/monokai");
+	//ep.setTheme("ace/theme/clouds");
+	ep.session.setMode("ace/mode/python");
+	function seteditor(){
+		//arr[temp]=ep.getSession().getValue();
+		var x = document.getElementById("selection").value;
+		if(x=="python2" || x=="python3"){
+			/*if(x=="python3")
+				temp=0;
+			else
+				temp=1;*/
+			ep.session.setMode("ace/mode/python");
+		}
+		else if(x=="c" || x=="cpp"){
+			/*if(x=="cpp")
+				temp=2;
+			else
+				temp=3;
+			*/
+			ep.session.setMode("ace/mode/c_cpp");
+		}
+		else if(x=="java"){
+			//temp=4;
+			ep.session.setMode("ace/mode/java");
+		}
+		else if(x=="javascript"){
+			//temp=4;
+			ep.session.setMode("ace/mode/javascript");
+		}
+		/*
+		if(arr[temp])
+			ep.setValue(arr[temp],1);
+		else
+			ep.setValue("",-1);
+		*/
+		document.getElementById("editor").childNodes[0].focus();
+	}
+	seteditor();
+	document.getElementById("editor").childNodes[0].focus();
+	function submit(){
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "compile/"+document.getElementById("selection").value, true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			
+			xhr.onload = function() {
+				if(this.responseText=="Wrong Selection" || this.responseText=="Server Error" ){
+						document.getElementById("status").innerHTML=this.responseText.fontcolor("red");
+					}
+				else{
+						console.log(this.responseText);
+						var rest=JSON.parse(this.responseText);
+						if(rest.result_output.errorType){
+							var temp=rest.result_output.errorType+" Error";
+							document.getElementById("status").innerHTML=temp.fontcolor("red");
+							document.getElementById('output').value=rest.result_output.stderr;
+						}
+						else{
+							document.getElementById("status").innerHTML="Successfully Compiled".fontcolor("green");
+							document.getElementById('output').value=rest.result_output.stdout;
+						}
+					}
+				}
+		xhr.send(JSON.stringify({carrier : ep.getSession().getValue(), carrier_ip : document.getElementById("input").value}));
+	}
+	/*
+	ep.on("change", function(e){
+		conn = peer.connect(p, {host: 'localhost', port: 3000, path: '/api'});
+		conn.send(e);
+		temp=e;
+		console.log(e);
+	});
+	peer.on('connection', (conn) => {
+		conn.on('data', (data) => {
+			ep.gotoLine(data.start.row+1, data.start.column, 1);
+		if(data.action=="insert")
+			ep.insert(data.lines.join("\n"));
+		else if(data.action=="remove")
+			ep.remove({start:temp.start,end:temp.end});
+		// Will print 'hi!'
+		console.log(data);
+		});
+	});
+	ep.on("changeMode", function(e){
+		console.log(e);
+	});
+	ep.on("changeFrontMarker", function(e){
+		
+	})
+
+	/*str=ep.getSession().getValue();
+	ep.getSession().on('change', function () {
+			str=ep.getSession().getValue(); 
+			});*/
+</script>
+	<script>
+		var port1=9000;
+		var yup=true;
+		var yup1=true;
+		var fan;
+		var interviewer=true
+		var parameters = location.search.substring(1).split("&");
+        var conn;
+        var temp = parameters[0].split("=");
+		var Range = ace.require('ace/range').Range;
+		l = unescape(temp[1]);
+		temp = parameters[1].split("=");
+		p = unescape(temp[1]);
+		/*var sock_client = io.connect('https://enbiocrypts.nl');
+		sock_client.on('connect', function() {
+			console.log(`sock_client connect`);
+		});*/
+		//var peer = new Peer(l,{host:'localhost',path:'/api', port:443})
+		var peer = new Peer(l,{host: 'enbiocrypts.nl', port: 443, path: '/api'});
+		var c = peer.connect(p);
+        peer.on('open', function (id) {
+            //$('#pid').text(id);
+			console.log(id);
+        });
+        peer.on('connection', connect);
+        //CONNECT
+        function connect(c) {
+            conn = c;
+            console.log('in connect', conn.peer);
+			var marker;
+            //$('#rid').val(conn.peer);
+            //$('#rid').prop('disabled', true);
+            //$('#progbar').width('100%');
+            //document.getElementById('status').innerText = "Connected";
+            conn.on('data', function (data) {
+					yup=false
+					ep.session.removeMarker(marker);
+					m=ep.getCursorPosition();
+					ep.gotoLine(data.start.row+1, data.start.column, 1);
+					if(data.action=="insert")
+						ep.insert(data.lines.join("\n"));
+					else if(data.action=="remove")
+						ep.session.remove({start:data.start,end:data.end});
+					//else if(data.action=="move")
+					//	ep.session.addMarker(new Range(data.mouse.row,data.mouse.column), "warning", "line", true);
+						// Will print 'hi!'
+						console.log(data);
+					p=ep.getCursorPosition();
+					if(p.column!=0)
+						marker=ep.session.addMarker(new Range(p.row,p.column), "MyCursorClass", "line", true);
+					ep.gotoLine(m.row+1, m.column, 1);
+					yup=true
+                //$('#inputText').val($('#inputText').val() + data);
+            });
+        }
+		/*ep.on("changeSelection", function(){
+		if(yup){
+			conn.send({action:"move",start : ep.getCursorPosition()});
+			console.log({mouse : ep.getCursorPosition()});
+			}
+		});*/
+        ep.on("change", function(e){
+			if(yup){
+            console.log(e);
+			fan=e;
+            conn.send(e);
+			}
+        });
+		/*
+		ep.on("paste", function(e){
+			e.text="";
+			console.log(e);
+		});*/
+		ep.on("copy", function(e){
+			console.log(e);
+			e.text="";
+		});
+		
+        c.on('open', function () {
+			interviewer=false;
+            console.log(c);
+            connect(c);
+        });
+
+    </script>
+<!--<script src="connection.js" type="text/javascript" charset="utf-8"></script>-->
+</body>
+</html>
