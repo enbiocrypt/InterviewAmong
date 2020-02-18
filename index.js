@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const hostname = 'localhost';
 const https = require('https');
 const ExpressPeerServer = require('peer').ExpressPeerServer;
+const path = require('path');
 const app = express();
 
 
@@ -52,8 +53,9 @@ app.use('/api', peer);
 */
 
 app.get('/',(req,res) => {
+	const index = path.join(__dirname, 'public', 'home.html');
 	//res.render('home',{port:port});
-	res.sendFile(__dirname+'/public/home.html');
+	res.sendFile(index);
 });
 
 /*
