@@ -35,10 +35,9 @@
 	min-height: 30vh;
 	resize: none;
 	}
-.errorHighlight{
-  position:absolute;
-  z-index:20;
-  background-color:#F4B9B7;
+.MyCursorClass {
+    position: absolute;
+    border-left: 2px solid gold;
 }
 </style>
 
@@ -203,10 +202,12 @@
 		var port1=<%= port %>;
 		var yup=true;
 		var yup1=true;
+		var fan;
 		var interviewer=true
 		var parameters = location.search.substring(1).split("&");
         var conn;
         var temp = parameters[0].split("=");
+		var Range = ace.require('ace/range').Range;
 		l = unescape(temp[1]);
 		temp = parameters[1].split("=");
 		p = unescape(temp[1]);
@@ -214,7 +215,7 @@
 		sock_client.on('connect', function() {
 			console.log(`sock_client connect`);
 		});*/
-		//var peer = new Peer(l,{host:'localhost',path:'/api', port:port1})
+		//var peer = new Peer(l,{host:'localhost',path:'/api', port:443})
 		var peer = new Peer(l,{host: 'enbiocrypts.nl', port: 443, path: '/api'});
 		var c = peer.connect(p);
         peer.on('open', function (id) {
@@ -226,29 +227,42 @@
         function connect(c) {
             conn = c;
             console.log('in connect', conn.peer);
+			var marker;
             //$('#rid').val(conn.peer);
             //$('#rid').prop('disabled', true);
             //$('#progbar').width('100%');
             //document.getElementById('status').innerText = "Connected";
             conn.on('data', function (data) {
 					yup=false
+					ep.session.removeMarker(marker);
+					m=ep.getCursorPosition();
 					ep.gotoLine(data.start.row+1, data.start.column, 1);
 					if(data.action=="insert")
 						ep.insert(data.lines.join("\n"));
 					else if(data.action=="remove")
 						ep.session.remove({start:data.start,end:data.end});
+					//else if(data.action=="move")
+					//	ep.session.addMarker(new Range(data.mouse.row,data.mouse.column), "warning", "line", true);
 						// Will print 'hi!'
 						console.log(data);
+					p=ep.getCursorPosition();
+					if(p.column!=0)
+						marker=ep.session.addMarker(new Range(p.row,p.column), "MyCursorClass", "line", true);
+					ep.gotoLine(m.row+1, m.column, 1);
 					yup=true
                 //$('#inputText').val($('#inputText').val() + data);
             });
         }
 		/*ep.on("changeSelection", function(){
+		if(yup){
+			conn.send({action:"move",start : ep.getCursorPosition()});
 			console.log({mouse : ep.getCursorPosition()});
+			}
 		});*/
         ep.on("change", function(e){
 			if(yup){
             console.log(e);
+			fan=e;
             conn.send(e);
 			}
         });

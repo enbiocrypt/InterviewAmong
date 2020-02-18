@@ -26,11 +26,13 @@ port = process.env.PORT || 3000;
 
 var httpsServer = https.createServer(app);
 
+var server1 = http.createServer(app).listen(443);
+
 var server = http.createServer(app).listen(port, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
-var peer = ExpressPeerServer(server, options);
+var peer = ExpressPeerServer(server1, options);
 
 
 app.set('view engine','ejs');
