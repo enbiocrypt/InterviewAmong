@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/node_modules'));
 app.use(express.static(__dirname + '/Public'));
-app.use(express.static(__dirname + '/Views'));
+app.use(express.static(__dirname + '/views'));
 
 //var httpsServer = https.createServer(app);
 
