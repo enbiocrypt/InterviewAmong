@@ -5,7 +5,8 @@ const session = require('express-session');
 const {c, cpp, node, python, java} = require('compile-run');
 const bodyParser = require('body-parser');
 const hostname = 'localhost';
-var ExpressPeerServer = require('peer').ExpressPeerServer;
+const https = require('https');
+const ExpressPeerServer = require('peer').ExpressPeerServer;
 const app = express();
 
 
@@ -24,9 +25,9 @@ var port = process.env.PORT || 3000;
 app.set('view engine','ejs');
 app.use(bodyParser.json());      
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static(__dirname + '/node_modules'));
-app.use(express.static(__dirname + '/public'));
-app.use(express.static(__dirname + '/views'));
+app.use(express.static('node_modules'));
+app.use(express.static('public'));
+app.use(express.static('views'));
 
 //var httpsServer = https.createServer(app);
 
@@ -51,16 +52,16 @@ app.use('/api', peer);
 */
 
 app.get('/',(req,res) => {
-	//res.render('home',{port:port});
-	res.sendFile(__dirname+'/public/index.html');
+	res.render('home',{port:port});
+	//res.sendFile(__dirname+'/public/index.html');
 });
 
-/*
+
 app.get('/home',(req,res) => {
 	res.render('home',{port:port});
 	//res.sendFile(__dirname+'/Public/index.html');
 });
-*/
+
 app.post('/compile/:feedsId',(req,res) => {
 	if(req.params.feedsId=="python2"){
 		let resultPromise = python.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
