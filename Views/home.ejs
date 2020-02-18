@@ -217,7 +217,8 @@
 			console.log(`sock_client connect`);
 		});*/
 		//var peer = new Peer(l,{host:'localhost',path:'/api', port:443})
-		var peer = new Peer(l,{host: 'enbiocrypts.nl', port: 443, path: '/api'});
+		var peer = new Peer(l,{host: 'ebc-tests.herokuapp.com', port: 443, path: '/api',secure:true});
+		//var peer = new Peer(l,{host: 'enbiocrypts.nl', port: 443, path: '/api'});
 		var c = peer.connect(p);
         peer.on('open', function (id) {
             //$('#pid').text(id);
