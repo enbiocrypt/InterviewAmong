@@ -6,8 +6,8 @@ const {c, cpp, node, python, java} = require('compile-run');
 const bodyParser = require('body-parser');
 const hostname = 'localhost';
 var https = require('https');
-const ExpressPeerServer = require('peer').ExpressPeerServer;
-//const socket_io = require('socket.io');
+var ExpressPeerServer = require('peer').ExpressPeerServer;
+var app = express();
 
 
 const sslop = {
@@ -20,18 +20,8 @@ var options = {
 	ssl: sslop
 };
 
-var app = express();
-port = process.env.PORT || 3000;
 
-var httpsServer = https.createServer(app);
-
-var server = http.createServer(app).listen(port, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
-
-var peer = ExpressPeerServer(server, options);
-
-
+var port = process.env.PORT || 3000;
 app.set('view engine','ejs');
 app.use(bodyParser.json());      
 app.use(bodyParser.urlencoded({extended: true}));
@@ -39,13 +29,15 @@ app.use(express.static(__dirname + '/node_modules'));
 app.use(express.static(__dirname + '/Public'));
 app.use(express.static(__dirname + '/Views'));
 
-app.use(function(req, res, next) {
-	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-	next();
-});
-app.use('/api', peer);
+//var httpsServer = https.createServer(app);
 
+var server = http.createServer(app).listen(port, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
+
+var peer = ExpressPeerServer(server, options);
+
+app.use('/api', peer);
 
 
 /*const server1 = PeerServer({
@@ -161,12 +153,6 @@ peer.on('disconnect', function(id) {
     console.log(id + "deconnected")
 });
 
-/*
-var rec_sockio = socket_io.listen(server);
-rec_sockio.sockets.on('connection', function(socket) {
-	console.log('socket is connected', socket.id);
-});
-*/
 /*
 app.use('/api', ExpressPeerServer(server, options));
 
