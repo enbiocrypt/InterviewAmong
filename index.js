@@ -5,9 +5,9 @@ const session = require('express-session');
 const {c, cpp, node, python, java} = require('compile-run');
 const bodyParser = require('body-parser');
 const hostname = 'localhost';
-var https = require('https');
-var ExpressPeerServer = require('peer').ExpressPeerServer;
-var app = express();
+const https = require('https');
+const ExpressPeerServer = require('peer').ExpressPeerServer;
+const app = express();
 
 
 const sslop = {
