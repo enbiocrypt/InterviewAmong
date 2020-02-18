@@ -25,9 +25,9 @@ var port = process.env.PORT || 3000;
 app.set('view engine','ejs');
 app.use(bodyParser.json());      
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static('node_modules'));
-app.use(express.static('public'));
-app.use(express.static('views'));
+app.use(express.static(__dirname + '/node_modules'));
+app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/views'));
 
 //var httpsServer = https.createServer(app);
 
@@ -53,15 +53,15 @@ app.use('/api', peer);
 
 app.get('/',(req,res) => {
 	//res.render('home',{port:port});
-	res.sendFile('index.html');
+	res.sendFile(__dirname+'/public/home.html');
 });
 
-
+/*
 app.get('/home',(req,res) => {
 	res.render('home',{port:port});
 	//res.sendFile(__dirname+'/Public/index.html');
 });
-
+*/
 app.post('/compile/:feedsId',(req,res) => {
 	if(req.params.feedsId=="python2"){
 		let resultPromise = python.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
