@@ -9,7 +9,7 @@ const https = require('https');
 const ExpressPeerServer = require('peer').ExpressPeerServer;
 const path = require('path');
 const app = express();
-
+var MySql = require('sync-mysql');
 
 const sslop = {
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
@@ -52,9 +52,17 @@ app.use('/api', peer);
 //port = process.env.PORT || 3000;
 */
 
-app.get('/',(req,res) => {
+app.get('/:pop',(req,res) => {
+	var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+	quer = 'select * from interdemo where sno="'+req.params.pop+'"';
+	var result = connection.query(quer);
+	console.log(result);
+	if(!result.length)
+		res.status(404).end("Session Expired (or) Wrong Link, Please Contact Admin or Recheck the link.");
+		//res.write("Session Expired (or) Wrong Link, Please Contact Admin or Recheck the link.");
+	else
+		res.render('home',{sender:result[0].sender,reciever:result[0].reciever,type:result[0].ptype});
 	//const index = path.join(__dirname, 'Public', 'home.html');
-	res.render('home',{port:port});
 	//res.sendFile(index);
 });
 

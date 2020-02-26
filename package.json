@@ -12,16 +12,23 @@
   "license": "ISC",
   "dependencies": {
     "angular": "^1.7.9",
+    "autosize": "^4.0.2",
     "bootstrap": "^4.4.1",
     "compile-run": "^2.3.2",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "fix-path": "^2.1.0",
+    "font-awesome": "^4.7.0",
+    "glyphicons": "^0.2.0",
     "jquery": "^3.4.1",
+    "jquery-resizable-dom": "^0.35.0",
     "peer": "^0.2.10",
+    "popper.js": "^1.16.1",
     "python-shell": "^1.0.8",
     "socket.io": "^2.3.0",
+    "sync-mysql": "^3.0.1",
+    "three-dots": "^0.2.0",
     "webrtc-adapter": "^7.5.0"
   }
 }

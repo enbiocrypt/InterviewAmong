@@ -4,12 +4,18 @@
 	<title>Cool</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
 	<script src="jquery/dist/jquery.min.js"></script>
-	<script src="bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="popper.js/dist/popper.min.js"></script>
+	<script src="bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="webrtc-adapter/out/adapter.js"></script>
+	<script src="jquery-resizable-dom/dist/jquery-resizable.min.js"></script>
+	<link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="three-dots/dist/three-dots.min.css">
 	<!--<script src="https://unpkg.com/peerjs@1.0.0/dist/peerjs.min.js"></script>-->
 	<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
+	<!--<script src="scripts/peerjs.min.js"></script>-->
+	<script src="autosize/dist/autosize.min.js"></script>
 </head>
 
 <style>
@@ -21,15 +27,25 @@
 	position:relative;
 	}
 #editor{
-	height: 80%;
-	min-height: 80vh;
-	width: 50%;
-	display: inline-block;
+	flex: 0 0 auto;
+	height: 80vh;
+	min-height: 20vh;
+	max-height: 80vh;
+	width: 100%;
+	//overflow:auto;
+	//resize:vertical;
+	//display: inline-block;
 	}
 #output{
-	height: 30%;
-	min-height: 30vh;
+	flex: 1 1 auto;
+	width: 100%;
+	height: 10vh;
+	min-height: 10vh;
+	max-height: 70vh;
 	resize: none;
+	background: #272822;
+    color: red;
+	border: none;
 	}
 #input{
 	height: 30%;
@@ -40,13 +56,199 @@
     position: absolute;
     border-left: 2px solid gold;
 }
+.splitter-horizontal {
+  flex: 0 0 auto;
+  height: 18px;
+  background: url(https://raw.githubusercontent.com/RickStrahl/jquery-resizable/master/assets/hsizegrip.png) center center no-repeat #535353;
+  cursor: row-resize;
+}
+  .chat-main{
+	position: fixed;
+	width: 260px;
+	bottom: 0;
+	right: 0px;
+}
+.header-one{
+	background: #404040;
+}
+.name h6{
+	display: inline-block;
+	font-size: 14px;
+}
+.options i,.options .arrow-up{
+	height: 25px;
+	width: 25px;
+}
+.options i{
+	color: #B2B2B2;
+	font-size: 16px;
+	cursor: pointer;
+}
+.options .hover:hover, .options .arrow-up:hover{
+	background: #737373;
+}
+.options .arrow-up{
+    display: inline-block;
+    line-height: 0;
+}
+.options .hover:hover, .options .arrow-up:hover .fa-arrow-up{
+	color: #fff;
+}
+.options .fa-arrow-up{
+	transform: rotate(40deg);
+}
+.header-two{
+	border-top: 2px solid #35AC19;
+	background: #ECEFF1;
+	color: #5E6060;
+	padding: 8px 0px 4px 8px;
+	box-shadow: 0px 6px 13px -7px #c1c1c1;
+	z-index: 1000;
+    position: absolute;
+}
+.options-left i, .options-right i{
+	font-size: 20px;
+	cursor: pointer;
+}
+.options-left i:hover, .options-right i:hover{
+	color: #000;
+}
+.chats{
+	height: 285px;
+	overflow-x: scroll;
+	overflow-x: hidden;
+	background: #ECEFF1;
+	position: relative;
+    //top: 35px;
+}
+.chats ul li{
+	display: inline-block;
+	list-style: none;
+	clear: both;
+	font-size: 13px;
+}
+.send-msg{
+	position: relative;
+}
+.send-msg:after{
+	content: "";
+	width:0;
+	height:0;
+	top: 0px;
+	right: -8px;
+	position: absolute;
+	border-top: 8px solid #CFD8DC;
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+}
+.send-msg p{
+	background: #CFD8DC;
+}
+.sender-img{
+	display: inline;
+}
+.sender-img img{
+	width: 32px;
+	height: 32px;
+	border-radius: 100%;
+}
+.receive-msg .receive-msg-desc{
+	display: inline-block;
+	position: relative;
+}
+.receive-msg-desc:before{
+	content: "";
+	width:0;
+	height:0;
+	top: 0px;
+	left: -8px;
+	position: absolute;
+	border-top: 8px solid #fff;
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+}
+.receive-msg-time,.send-msg-time{
+	color: #7D7E87;
+	font-size: 10px;
+}
+.receive-msg-time i{
+	font-size: 4px;
+}
+.msg-box{
+	//margin-top: 35px;
+}
+.msg-box i{
+	color: #404040;
+}
+.msg-box textarea{
+	font-size: 14px;
+}
+.msg-box textarea:focus{
+	outline: none;
+}
+.splitter {
+  flex: 0 0 auto;
+  width: 18px;  
+  background: url(https://raw.githubusercontent.com/RickStrahl/jquery-resizable/master/assets/vsizegrip.png) center center no-repeat #535353;
+  min-height: 200px;
+  cursor: col-resize;  
+}
+.panel-left {
+  flex: 0 0 auto;
+  min-width:40vw;
+  max-width:70vw;
+  width:50vw;
+  /* only manually resize */
+}
+.panel-right {
+  flex: 1 1 auto;
+  /* resizable */
+}
+#w3mission::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}
+#typing_b {
+	visibility:hidden;
+}
+#mydiv1 {
+  position: absolute;
+  z-index: 9;
+  background-color: #f1f1f1;
+  text-align: center;
+  border: 1px solid #d3d3d3
+}
+
+#mydiv1header {
+  padding: 10px;
+  cursor: move;
+  z-index: 10;
+  background-color: #2196F3;
+  color: #fff;
+  text-align-last: left;
+}
+#mydiv2header {
+  padding: 10px;
+  z-index: 10;
+  background-color: #2196F3;
+  color: #fff;
+}
+.resize_op {
+  overflow-y: scroll;
+  resize: both;
+  max-width: 50vw;
+  max-height: 50vh;
+  border: 1px solid black;
+  min-width: 400px;
+  min-height: 250px;
+}
 </style>
 
 <body>
 
 
 <div id="container">
-<div style="display:flex">
+<!--<div style="display:flex">
 	<div class="col-lg-6" style="display:inline-flex;">
 		<h4 style="margin-top: 0px;margin-bottom: 0px;">Select Programming Language:</h4>
 		&nbsp;
@@ -67,24 +269,133 @@
 	<div class="col-lg-2">
 		<h4 style="margin-top: 0px;margin-bottom: 0px;">Output:</h4>
 	</div>
-</div>
-	<div id="editor" class="col-lg-6"></div>
-	<textarea id="input" class="col-lg-2" placeholder="Inputs Here..."></textarea>
-	<textarea readonly id="output" class="col-lg-2" placeholder="Output Here.."></textarea>
-	<div style="display:flex;width: 100%;">
-		<div class="col-sm-6" align="right">
-			<button id="exec" type="button" onclick="submit()">Execute</button>
+</div> -->
+	<div style="display:flex">
+		<div class="panel-left" style="height: 100vh;background: #535353;padding-left:5px;padding-right:0px;">
+				<div style="display:inline-flex;padding:5;width:100%">
+					<div class="col-lg-6">
+						<select id="selection" class="dropright btn btn-primary dropdown-toggle" onchange="seteditor()" style="border-radius: 15px;">
+							<option value="python3">Python 3.5.3</option>
+							<option value="python2">Python 2.7.13</option>
+							<option value="java">Java 1.8.0</option>
+							<option value="c">C (gcc 6.3.0)</option>
+							<option value="cpp">C++ (gcc 6.3.0)</option>
+							<option value="javascript">JavaScript</option>
+						</select>
+					</div>
+					<div class="col-sm-4" style="display: flex;justify-content: flex-end;align-items: center;">
+						<div style="align: center;" class="dropdown">
+							<a href="" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-sign-in fa-2x"></i></a>
+							<div class="dropdown-menu" style="">
+								<a href="#" class="dropdown-item"><textarea id="input" placeholder="Inputs Here..."></textarea></a>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-2" align="right">
+						<button id="exec" type="button" class="btn btn-primary" onclick="submit()"><i class="fa fa-chevron-right"></i> Run</button>
+					</div>
+				</div>
+			<div id="editor" class="panel-top"></div>
+			<div class="splitter-horizontal"></div>
+			<textarea readonly id="output" placeholder="Output Here.." class="panel-bottom"></textarea>
 		</div>
-		<div class="col-sm-6" style="display: flex">
-			<h4 style="margin-top: 0px;margin-bottom: 0px;">Status:</h4>
-			&nbsp;
-			<h4 style="margin-top: 0px;margin-bottom: 0px;" id="status"></h4>
+		<div class="splitter"></div>
+		<div class="panel-right" style="background:#272822;">
+			<div class="row" style="height:45vh;margin-right:0px;margin-left:0px;">
+				</div>
+			<div class="row" style="height:55vh;margin-right:0px;margin-left:0px;">
+				<div style="width: 70px;background:white;display: list-item;height: -webkit-fill-available;overflow-y: scroll;">
+					<button class="btn btn-success btn-circle m-1">1</button>
+
+				</div>
+				<div class="col-sm-4" style="height: -webkit-fill-available">
+					<div id="mydiv1" class="mydiv1">
+						<div style="display:flex">
+							<div id="mydiv1header" class="col-sm-10">Problem 1</div>
+							<div id="mydiv2header" class="col-sm-2">
+								<div class="options-right" style="display:flex;justify-content:flex-end;padding-right:15px;">
+									<i class="fa fa-window-minimize"></i>
+								</div>	
+							</div>
+						</div>
+						<textarea class="resize_op"></textarea>
+					</div>
+				</div>
+				<div class="col-sm-8">
+				<div class="chat-main">
+                <div class="col-md-12 chat-header">
+                    <div class="row header-one text-white p-1">
+                        <div class="col-md-6 name pl-2">
+                            <i class="fa fa-comment"></i>
+                            <h6 class="ml-1 mb-0">Interviewer</h6>
+                        </div>
+                        <div class="col-md-6 options text-right pr-0">
+                            <i class="fa fa-window-minimize hide-chat-box hover text-center pt-1"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-content">
+                    <div class="col-md-12 chats pt-3 pl-2 pr-3 pb-3">
+                        <ul class="p-0" id="msg-app">
+							<li class="receive-msg float-left mb-2" id="typing_b" style="align-items: flex-end;display:flex;">
+								<div class="sender-img">
+									<img src="https://www.interviewbuddy.in/images/boy.png" class="float-left">
+								</div>
+								&nbsp;&nbsp;&nbsp;
+								<div class="float-left ml-2">
+									<div class="dot-pulse"></div>
+								</div>
+							</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-12 p-1 msg-box" style="background:white">
+                        <div style="display:flex;justify-content: center;align-items: center;">
+							<div class="col-md-2 text-right options-right" style="padding-left:10px">
+								<i class="fa fa-product-hunt"></i>
+							</div>
+                            <div class="col-md-8" style="padding:0;display:flex;">
+								<textarea id="w3mission" onkeypress="typing()" class="border-0" placeholder=" Send message" style="height:inherit;width:inherit;resize:none;max-height: 75px;" rows="2"></textarea>
+                                <!--<input type="text" class="border-0" placeholder=" Send message" />-->
+                            </div>
+                            <div class="col-md-2 text-right options-right">
+                                <i class="fa fa-picture-o mr-2 send-opp"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				</div>
+				</div>
+				</div>
+			</div>
+			<!--<textarea id="input" class="col-lg-2" placeholder="Inputs Here..."></textarea>
+			
+			<div style="display:flex;width: 100%;">
+				<div class="col-sm-6" align="right">
+					<button id="exec" type="button" onclick="submit()">Execute</button>
+				</div>
+				<div class="col-sm-6" style="display: flex">
+					<h4 style="margin-top: 0px;margin-bottom: 0px;">Status:</h4>
+					&nbsp;
+					<h4 style="margin-top: 0px;margin-bottom: 0px;" id="status"></h4>
+				</div> -->
 		</div>
 	</div>
 </div>
 
 <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
+	var state1=true;
+	$('.hide-chat-box').click(function(){
+		if(state1){
+			document.getElementsByClassName('hide-chat-box')[0].classList.value="fa fa-window-maximize hide-chat-box hover text-center pt-1";
+			state1=false;
+		}
+		else{
+			document.getElementsByClassName('hide-chat-box')[0].classList.value="fa fa-window-minimize hide-chat-box hover text-center pt-1";
+			state1=true;
+		}
+		$('.chat-content').slideToggle();
+	});
 	/*var parameters = location.search.substring(1).split("&");
 	var peer;
 	var conn;
@@ -108,6 +419,7 @@
 	ep.setTheme("ace/theme/monokai");
 	//ep.setTheme("ace/theme/clouds");
 	ep.session.setMode("ace/mode/python");
+	ep.setAutoScrollEditorIntoView(true);
 	function seteditor(){
 		//arr[temp]=ep.getSession().getValue();
 		var x = document.getElementById("selection").value;
@@ -145,6 +457,8 @@
 	seteditor();
 	document.getElementById("editor").childNodes[0].focus();
 	function submit(){
+			document.getElementById("exec").disabled=true;
+			document.getElementById("exec").childNodes[0].classList.value="spinner-border spinner-border-sm";
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", "compile/"+document.getElementById("selection").value, true);
 			xhr.setRequestHeader('Content-Type', 'application/json');
@@ -166,6 +480,8 @@
 							document.getElementById('output').value=rest.result_output.stdout;
 						}
 					}
+					document.getElementById("exec").childNodes[0].classList.value="fa fa-chevron-right";
+					document.getElementById("exec").disabled=false;
 				}
 		xhr.send(JSON.stringify({carrier : ep.getSession().getValue(), carrier_ip : document.getElementById("input").value}));
 	}
@@ -200,18 +516,22 @@
 			});*/
 </script>
 	<script>
-		var port1=<%= port %>;
+		//autosize(document.getElementById("w3mission"));
 		var yup=true;
 		var yup1=true;
+		var xmas;
 		var fan;
 		var interviewer=true
 		var parameters = location.search.substring(1).split("&");
         var conn;
-        var temp = parameters[0].split("=");
+		var interviewer;
 		var Range = ace.require('ace/range').Range;
-		l = unescape(temp[1]);
-		temp = parameters[1].split("=");
-		p = unescape(temp[1]);
+		l = "<%- sender %>";
+		p = "<%- reciever %>";
+		if(<%- type %>)
+			interviewer=true;
+		else
+			interviewer=false;
 		/*var sock_client = io.connect('https://enbiocrypts.nl');
 		sock_client.on('connect', function() {
 			console.log(`sock_client connect`);
@@ -235,6 +555,37 @@
             //$('#progbar').width('100%');
             //document.getElementById('status').innerText = "Connected";
             conn.on('data', function (data) {
+				if(data.action=="message_s"){
+					document.getElementById("typing_b").style.visibility="hidden";
+					var x=document.createElement("li");
+					x.setAttribute("class","receive-msg float-left mb-2");
+					x.setAttribute("style","display:flex;white-space: normal;word-break: break-word;");
+					var d1=document.createElement("div");
+					d1.setAttribute("class","sender-img");
+					var img=document.createElement("img");
+					img.setAttribute("src","https://www.interviewbuddy.in/images/boy.png");
+					img.setAttribute("class","float-left");
+					d1.appendChild(img);
+					var d2=document.createElement("div");
+					d2.setAttribute("class","receive-msg-desc float-left ml-2");
+					var y=document.createElement("p");
+					y.setAttribute("class","bg-white m-0 pt-1 pb-1 pl-2 pr-2 rounded");
+					y.innerHTML=data.message;
+					d2.appendChild(y);
+					x.appendChild(d1);
+					x.append(d2);
+					document.getElementById("msg-app").insertBefore(x,document.getElementById("msg-app").childNodes[document.getElementById("msg-app").childNodes.length-2]);
+					//document.getElementById("msg-app").appendChild(x);
+				}
+				else if(data.action=="typing_l"){
+						if(xmas)
+							clearTimeout(xmas);
+						document.getElementById("typing_b").style.visibility="visible";
+						xmas=setTimeout(function() {
+							document.getElementById("typing_b").style.visibility="hidden";
+						}, 2000);	
+				}
+				else{
 					yup=false
 					ep.session.removeMarker(marker);
 					m=ep.getCursorPosition();
@@ -252,9 +603,26 @@
 						marker=ep.session.addMarker(new Range(p.row,p.column), "MyCursorClass", "line", true);
 					ep.gotoLine(m.row+1, m.column, 1);
 					yup=true
+				}
                 //$('#inputText').val($('#inputText').val() + data);
             });
         }
+		
+		peer.on('disconnected',function(){
+			var interval = setInterval(function(){
+				if(peer.open==true || peer.destroyed==true)
+					clearInterval(interval);
+				else{
+						peer.reconnect();
+					}
+				},4000)
+		});
+		c.on('disconnected',function(){
+			console.log("Candidate left");
+		});
+		c.on('close',function(){
+			console.log("Candidate closed");
+		});
 		/*ep.on("changeSelection", function(){
 		if(yup){
 			conn.send({action:"move",start : ep.getCursorPosition()});
@@ -284,7 +652,101 @@
             connect(c);
         });
 
+		 $(".panel-top").resizable({
+			handleSelector: ".splitter-horizontal",
+			resizeWidth: false,
+			onDragStart: function () {
+				ep.resize();
+			},
+			onDragEnd: function () {
+				ep.resize();
+			}
+		});
+		$(".panel-bottom").resizable({
+			handleSelector: ".splitter-horizontal",
+			resizeWidth: false,
+			resizeHeightFrom : 'top',
+			onDragStart: function () {
+				ep.resize();
+			},
+			onDragEnd: function () {
+				ep.resize();
+			}
+		});
+		$(".panel-left").resizable({
+			handleSelector: ".splitter",
+			resizeHeight: false,
+			onDragStart: function () {
+				ep.resize();
+			},
+			onDragEnd: function () {
+				ep.resize();
+			}
+		});
+		$('.send-opp').click(function(){
+			var tes1=document.getElementById("w3mission").value.split('\n').join('<br>');
+			document.getElementById("w3mission").value="";
+			conn.send({action:"message_s",message:tes1});
+			var x=document.createElement("li");
+			x.setAttribute("class","send-msg float-right mb-2");
+			x.setAttribute("style","display:flex;white-space: normal;word-break: break-word;");
+			var y=document.createElement("p");
+			y.setAttribute("class","pt-1 pb-1 pl-2 pr-2 m-0 rounded");
+			//y.innerHTML.split('\n').join("</br>");
+			y.innerHTML=tes1;
+			x.appendChild(y);
+			document.getElementById("msg-app").insertBefore(x,document.getElementById("msg-app").childNodes[document.getElementById("msg-app").childNodes.length-2]);
+			//document.getElementById("msg-app").appendChild(x);
+		});
+	function typing(){
+		conn.send({action:"typing_l"});
+	};
     </script>
+<script>
+//Make the DIV element draggagle:
+dragElement(document.getElementById("mydiv1"));
+
+function dragElement(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + "header")) {
+    /* if present, the header is where you move the DIV from:*/
+    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  } else {
+    /* otherwise, move the DIV from anywhere inside the DIV:*/
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    /* stop moving when mouse button is released:*/
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+};
+</script>
 <!--<script src="connection.js" type="text/javascript" charset="utf-8"></script>-->
 </body>
 </html>
