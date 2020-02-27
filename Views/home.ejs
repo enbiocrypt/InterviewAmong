@@ -54,7 +54,7 @@
 	}
 .MyCursorClass {
     position: absolute;
-    border-left: 2px solid gold;
+    border-left: solid gold;
 }
 .splitter-horizontal {
   flex: 0 0 auto;
@@ -514,6 +514,15 @@
 	ep.getSession().on('change', function () {
 			str=ep.getSession().getValue(); 
 			});*/
+	/*ep.commands.on("exec", function(e) { 
+		var rowCol = ep.selection.getCursor();
+		if (rowCol.row == 1) {
+				console.log("new",e);
+				e.preventDefault();
+				e.stopPropagation();
+				ep.insert("\n");
+			}
+	});*/
 </script>
 	<script>
 		//autosize(document.getElementById("w3mission"));
@@ -521,6 +530,7 @@
 		var yup1=true;
 		var xmas;
 		var fan;
+		var marker;
 		var interviewer=true
 		var parameters = location.search.substring(1).split("&");
         var conn;
@@ -549,7 +559,6 @@
         function connect(c) {
             conn = c;
             console.log('in connect', conn.peer);
-			var marker;
             //$('#rid').val(conn.peer);
             //$('#rid').prop('disabled', true);
             //$('#progbar').width('100%');
@@ -587,25 +596,53 @@
 				}
 				else{
 					yup=false
-					ep.session.removeMarker(marker);
+					if(marker)
+						ep.session.removeMarker(marker);
 					m=ep.getCursorPosition();
-					ep.gotoLine(data.start.row+1, data.start.column, 1);
-					if(data.action=="insert")
-						ep.insert(data.lines.join("\n"));
-					else if(data.action=="remove")
+					//ep.gotoLine(data.start.row+1, data.start.column, 1);
+					if(data.action=="insert"){
+						ep.session.insert(data.start,data.lines.join("\n"));
+						ep.gotoLine(m.row+1, m.column, 1);
+						marker=ep.session.addMarker(new Range(data.end.row,data.end.column,data.end.row), "MyCursorClass", "line", true);
+						//ep.insert(data.lines.join("\n"));
+					}
+					else if(data.action=="remove"){
 						ep.session.remove({start:data.start,end:data.end});
+						ep.gotoLine(m.row+1, m.column, 1);
+						marker=ep.session.addMarker(new Range(data.start.row,data.start.column,data.start.row), "MyCursorClass", "line", true);
+					}
+					else if(data.action=="move"){
+						console.log(data);
+						marker=ep.session.addMarker(new Range(data.start.row,data.start.column,data.start.row), "MyCursorClass", "line", true);
+					}
 					//else if(data.action=="move")
 					//	ep.session.addMarker(new Range(data.mouse.row,data.mouse.column), "warning", "line", true);
 						// Will print 'hi!'
+					/*if(yup1){
 						console.log(data);
-					p=ep.getCursorPosition();
-					if(p.column!=0)
-						marker=ep.session.addMarker(new Range(p.row,p.column), "MyCursorClass", "line", true);
-					ep.gotoLine(m.row+1, m.column, 1);
+						p=ep.getCursorPosition();
+						console.log(p);
+						marker=ep.session.addMarker(new Range(p.row,p.column,p.row), "MyCursorClass", "line", true);
+						ep.gotoLine(m.row+1, m.column, 1);
+					}
+					yup1=true;*/
+					/*var interval = setInterval(function(){
+					console.log(document.getElementsByClassName("ace_start")[0].parentElement.childNodes.length);
+						if(document.getElementsByClassName("ace_start")[0]){
+							if(document.getElementsByClassName("ace_start")[0].parentElement.childNodes.length>1)
+								document.getElementsByClassName("ace_start")[0].parentElement.removeChild(document.getElementsByClassName("ace_start")[0].parentElement.childNodes[1])	
+							}
+						},1);*/
 					yup=true
 				}
                 //$('#inputText').val($('#inputText').val() + data);
             });
+			conn.on('disconnected',function(){
+				console.log("Candidate left");
+			});
+			conn.on('close',function(){
+				console.log("Candidate closed");
+			});
         }
 		
 		peer.on('disconnected',function(){
@@ -617,22 +654,30 @@
 					}
 				},4000)
 		});
-		c.on('disconnected',function(){
-			console.log("Candidate left");
-		});
-		c.on('close',function(){
-			console.log("Candidate closed");
-		});
-		/*ep.on("changeSelection", function(){
-		if(yup){
-			conn.send({action:"move",start : ep.getCursorPosition()});
-			console.log({mouse : ep.getCursorPosition()});
+		
+		ep.on("changeSelection", function(e){
+			console.log(e);
+			if(yup){
+				conn.send({action:"move",start : ep.getCursorPosition()});
+				console.log({mouse : ep.getCursorPosition()});
 			}
-		});*/
+		});
         ep.on("change", function(e){
 			if(yup){
             console.log(e);
 			fan=e;
+			if(e.action=="remove"){
+				if(marker){
+					if(ep.multiSelect.session.$frontMarkers[marker].range.start.row>e.start.row){
+						ep.session.removeMarker(marker);
+						marker=ep.session.addMarker(new Range(e.start.row,e.start.column,e.start.row), "MyCursorClass", "line", true);
+					}
+					else if((ep.multiSelect.session.$frontMarkers[marker].range.start.row==e.start.row)&&(ep.multiSelect.session.$frontMarkers[marker].range.start.column>e.start.column)){
+						ep.session.removeMarker(marker);
+						marker=ep.session.addMarker(new Range(e.start.row,e.start.column,e.start.row), "MyCursorClass", "line", true);
+					}
+				}
+			}
             conn.send(e);
 			}
         });
