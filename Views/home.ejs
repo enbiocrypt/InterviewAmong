@@ -5,16 +5,17 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="jquery/dist/jquery.min.js"></script>
-	<script src="popper.js/dist/popper.min.js"></script>
+	<script src="popper.js/dist/umd/popper.min.js"></script>
 	<script src="bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="webrtc-adapter/out/adapter.js"></script>
 	<script src="jquery-resizable-dom/dist/jquery-resizable.min.js"></script>
 	<link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
 	<link rel="stylesheet" href="three-dots/dist/three-dots.min.css">
-	<!--<script src="https://unpkg.com/peerjs@1.0.0/dist/peerjs.min.js"></script>-->
-	<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
-	<!--<script src="scripts/peerjs.min.js"></script>-->
+	<script src="peerjs/dist/peerjs.min.js"></script>
+	<!--<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/peerjs@1.0.0/dist/peerjs.min.js"></script>
+	<script src="scripts/peerjs.min.js"></script>-->
 	<script src="autosize/dist/autosize.min.js"></script>
 </head>
 
@@ -226,6 +227,23 @@
   text-align-last: left;
   font-weight: lighter;
 }
+
+#mydiv1header1 {
+  cursor: move;
+  z-index: 10;
+  background-color: #2196F3;
+  color: #fff;
+  text-align-last: left;
+  font-weight: lighter;
+}
+
+#mydiv2header1 {
+  z-index: 10;
+  background-color: #2196F3;
+  color: #fff;
+  padding:5px;
+}
+
 #mydiv2header {
   z-index: 10;
   background-color: #2196F3;
@@ -302,7 +320,7 @@
 </style>
 
 <body>
-
+<% if (!type) { %>
 <div class = "preload" id = "preload">
   <div class ="logo">
    <span style = "color: #3492eb;">InterviewBuddy</span>-<span style = "color: #ebae34;">Pro</span>
@@ -312,11 +330,15 @@
     <div class = "loader2" id = "loader2"></div>
    </div>
   <div class ="logo" style="margin: 50px auto 50px auto;">
-   Please wait while we prepare your Interview Platform....
+   Please wait while we connect you to the Interviewer....
   </div>
 </div>
-
 <div id="container" style="visibility:hidden">
+<% } %>
+
+<% if (type) { %>
+	<div id="container">
+<% } %>
 <!--<div style="display:flex">
 	<div class="col-lg-6" style="display:inline-flex;">
 		<h4 style="margin-top: 0px;margin-bottom: 0px;">Select Programming Language:</h4>
@@ -373,21 +395,30 @@
 			<div class="row" style="height:45vh;margin-right:0px;margin-left:0px;">
 				</div>
 			<div class="row" style="height:55vh;margin-right:0px;margin-left:0px;">
-				<div style="width: 70px;background:white;display: list-item;height: -webkit-fill-available;overflow-y: scroll;">
-					<button class="btn btn-success btn-circle m-1">1</button>
-
-				</div>
-				<div class="col-sm-4" style="height: -webkit-fill-available">
+				<div class="col-sm-4">
 					<div id="mydiv1" class="mydiv1">
 						<div style="display:flex">
-							<div id="mydiv1header" class="col-sm-10">Problem 1</div>
-							<div id="mydiv2header" class="col-sm-2">
-								<div class="options-right" style="display:flex;justify-content:flex-end;padding-right:15px;">
-									<i class="fa fa-window-minimize"></i>
-								</div>	
-							</div>
+							<div id="mydiv1header" class="col-sm-10">Problems</div>
+								<div id="mydiv2header" class="col-sm-2">
+									<div class="options-right" style="display:flex;justify-content:flex-end;padding-right:15px;">
+										<i class="fa fa-window-minimize hide-chat-box1"></i>
+									</div>	
+								</div>
 						</div>
-						<textarea class="resize_op"></textarea>
+						<% if (type) { %>
+							<textarea class="resize_op" id="resize_op" oninput="res_po()"></textarea>
+						<% } %>
+						<% if (!type) { %>
+							<textarea class="resize_op" id="resize_op" disabled></textarea>
+						<% } %>
+					</div>
+					<div style="display:flex;bottom: 0;position: absolute;visibility:hidden;" id="prob_h">
+							<div id="mydiv1header1" class="col-sm-10">Problems</div>
+								<div id="mydiv2header1" class="col-sm-2">
+									<div class="options-right" style="display:flex;justify-content:flex-end;padding-right:15px;">
+										<i class="fa fa-window-maximize hide-chat-box1"></i>
+									</div>	
+								</div>
 					</div>
 				</div>
 				<div class="col-sm-8">
@@ -408,7 +439,7 @@
                         <ul class="p-0" id="msg-app">
 							<li class="receive-msg float-left mb-2" id="typing_b" style="align-items: flex-end;display:flex;">
 								<div class="sender-img">
-									<img src="https://www.interviewbuddy.in/images/boy.png" class="float-left">
+									<img src="boy.png" class="float-left">
 								</div>
 								&nbsp;&nbsp;&nbsp;
 								<div class="float-left ml-2">
@@ -419,15 +450,13 @@
                     </div>
                     <div class="col-md-12 p-1 msg-box" style="background:white">
                         <div style="display:flex;justify-content: center;align-items: center;">
-							<div class="col-md-2 text-right options-right" style="padding-left:10px">
-								<i class="fa fa-product-hunt"></i>
-							</div>
-                            <div class="col-md-8" style="padding:0;display:flex;">
-								<textarea id="w3mission" onkeypress="typing()" class="border-0" placeholder=" Send message" style="height:inherit;width:inherit;resize:none;max-height: 75px;" rows="2"></textarea>
+							
+                            <div class="col-md-10" style="padding:0;display:flex;">
+								<textarea id="w3mission" class="border-0" placeholder=" Send message" style="height:inherit;width:inherit;resize:none;max-height: 75px;" rows="2"></textarea>
                                 <!--<input type="text" class="border-0" placeholder=" Send message" />-->
                             </div>
                             <div class="col-md-2 text-right options-right">
-                                <i class="fa fa-picture-o mr-2 send-opp"></i>
+								<i class="fa fa-paper-plane mr-2 send-opp"></i>
                             </div>
                         </div>
                     </div>
@@ -452,8 +481,10 @@
 </div>
 
 <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+
 <script>
 	var state1=true;
+	var statei=true;
 	$('.hide-chat-box').click(function(){
 		if(state1){
 			document.getElementsByClassName('hide-chat-box')[0].classList.value="fa fa-window-maximize hide-chat-box hover text-center pt-1";
@@ -463,7 +494,20 @@
 			document.getElementsByClassName('hide-chat-box')[0].classList.value="fa fa-window-minimize hide-chat-box hover text-center pt-1";
 			state1=true;
 		}
-		$('.chat-content').slideToggle();
+		$('.chat-content').slideToggle(100);
+	});
+	
+	$('.hide-chat-box1').click(function(){
+		if(statei){
+			document.getElementById("mydiv1").style.visibility="hidden";
+			document.getElementById("prob_h").style.visibility="visible";
+			statei=false;
+		}
+		else{
+			document.getElementById("mydiv1").style.visibility="visible";
+			document.getElementById("prob_h").style.visibility="hidden";
+			statei=true;
+		}
 	});
 	/*var parameters = location.search.substring(1).split("&");
 	var peer;
@@ -641,7 +685,7 @@
 					var d1=document.createElement("div");
 					d1.setAttribute("class","sender-img");
 					var img=document.createElement("img");
-					img.setAttribute("src","https://www.interviewbuddy.in/images/boy.png");
+					img.setAttribute("src","boy.png");
 					img.setAttribute("class","float-left");
 					d1.appendChild(img);
 					var d2=document.createElement("div");
@@ -663,6 +707,11 @@
 							document.getElementById("typing_b").style.visibility="hidden";
 						}, 2000);	
 				}
+			<% if (!type) { %>
+				else if(data.action=="recieve_prob"){
+					document.getElementById("resize_op").value=data.message;
+				}
+			<% } %>
 				else{
 					yup=false
 					if(marker)
@@ -681,9 +730,9 @@
 						marker=ep.session.addMarker(new Range(data.start.row,data.start.column,data.start.row), "MyCursorClass", "line", true);
 					}
 					else if(data.action=="move"){
-						console.log(data);
 						marker=ep.session.addMarker(new Range(data.start.row,data.start.column,data.start.row), "MyCursorClass", "line", true);
 					}
+					
 					//else if(data.action=="move")
 					//	ep.session.addMarker(new Range(data.mouse.row,data.mouse.column), "warning", "line", true);
 						// Will print 'hi!'
@@ -704,6 +753,7 @@
 						},1);*/
 					yup=true
 				}
+				console.log(data);
                 //$('#inputText').val($('#inputText').val() + data);
             });
 			conn.on('disconnected',function(){
@@ -813,11 +863,33 @@
 			//document.getElementById("msg-app").appendChild(x);
 		});
 	function typing(){
+		//console.log("typing");
 		conn.send({action:"typing_l"});
 	};
+	
+	$("#w3mission").keypress(function(e) {
+		typing();
+		if(e.which == 13 && e.shiftKey) {
+			
+		}
+		else if (e.which == 13) {
+			e.preventDefault(); //Stops enter from creating a new line
+
+			$('.send-opp').click(); //or ajax submit
+		}
+	});
+	
+	<% if (type) { %>
+		function res_po(){
+			var tes1=document.getElementById("resize_op").value.split('\n').join('<br>');
+			conn.send({action:"recieve_prob",message:tes1});
+		}
+	<% } %>
+	
     </script>
 <script>
 //Make the DIV element draggagle:
+
 dragElement(document.getElementById("mydiv1"));
 
 function dragElement(elmnt) {
@@ -861,6 +933,7 @@ function dragElement(elmnt) {
   }
 };
 </script>
+<% if (!type) { %>
 <script type="text/javascript">
 
 (function(){
@@ -870,24 +943,27 @@ function dragElement(elmnt) {
  var id = setInterval(frame, 64);
 
  function frame(){
-  if(loading == 200) {
-   clearInterval(id);
-   document.getElementById("preload").style.visibility="hidden";
-   document.getElementById("container").style.visibility="visible";
-  }
-  else {
-   loading = loading + 1;
-   if(loading == 195) {
-    preload.style.animation = "fadeout 1s ease";
-   }
-  }
+	
+	if(conn){
+		if(loading == 50) {
+			clearInterval(id);
+			document.getElementById("preload").style.visibility="hidden";
+			document.getElementById("container").style.visibility="visible";
+		}
+		else {
+			loading = loading + 1;
+			if(loading == 40) {
+				preload.style.animation = "fadeout 1s ease";
+			}
+		}
+	}
+  
  }
 
 
 })();
-
-
-    </script>
+</script>
+<% } %>
 <!--<script src="connection.js" type="text/javascript" charset="utf-8"></script>-->
 </body>
 </html>
