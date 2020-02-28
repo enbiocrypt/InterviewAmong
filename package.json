@@ -29,7 +29,6 @@
     "socket.io": "^2.3.0",
     "sync-mysql": "^3.0.1",
     "three-dots": "^0.2.0",
-    "utf-8-validate": "^5.0.2",
     "webrtc-adapter": "^7.5.0"
   },
   "devDependencies": {},
