@@ -14,7 +14,6 @@
     "angular": "^1.7.9",
     "autosize": "^4.0.2",
     "bootstrap": "^4.4.1",
-    "bufferutil": "^4.0.1",
     "compile-run": "^2.3.2",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
