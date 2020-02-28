@@ -1,7 +1,7 @@
 {
   "name": "python",
   "version": "1.0.0",
-  "description": "\"# OnlineComplier\"",
+  "description": "OnlineComplier",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -31,14 +31,5 @@
     "sync-mysql": "^3.0.1",
     "three-dots": "^0.2.0",
     "webrtc-adapter": "^7.5.0"
-  },
-  "devDependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/enbiocrypt/OnlineComplier.git"
-  },
-  "bugs": {
-    "url": "https://github.com/enbiocrypt/OnlineComplier/issues"
-  },
-  "homepage": "https://github.com/enbiocrypt/OnlineComplier#readme"
+  }
 }
