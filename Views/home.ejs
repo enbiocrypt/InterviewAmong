@@ -13,7 +13,7 @@
 	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
 	<link rel="stylesheet" href="three-dots/dist/three-dots.min.css">
 	<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
-	<!--<script src="peerjs/dist/peerjs.min.js"></script>
+	<!--<script src="peerjs/dist/peerjs.min.js"></script>-->
 	<!--<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/peerjs@1.0.0/dist/peerjs.min.js"></script>
 	<script src="scripts/peerjs.min.js"></script>-->
@@ -21,6 +21,27 @@
 </head>
 
 <style>
+#my-camera
+{
+    transform: rotateY(180deg);
+    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+    -moz-transform:rotateY(180deg); /* Firefox */
+}
+#peer-camera
+{
+    transform: rotateY(180deg);
+    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+    -moz-transform:rotateY(180deg); /* Firefox */
+}
+#notifications {
+    cursor: pointer;
+    position: fixed;
+    top: 0px;
+    z-index: 9999;
+    margin-bottom: 22px;
+    margin-right: 15px;
+    //max-width: 300px;   
+}
 #container{
 	height:100%;
 	width:auto;
@@ -230,7 +251,6 @@
 }
 
 #mydiv1header1 {
-  cursor: move;
   z-index: 10;
   background-color: #2196F3;
   color: #fff;
@@ -393,8 +413,27 @@
 		</div>
 		<div class="splitter"></div>
 		<div class="panel-right" style="background:#272822;">
-			<div class="row" style="height:45vh;margin-right:0px;margin-left:0px;">
-				</div>
+				<div class="row" style="height:45vh;margin-right:0px;margin-left:0px;">
+						<div class="col-md-6 col-lg-6">
+							<!-- 
+								Display video of the current user
+								Note: mute your own video, otherwise you'll hear yourself ...
+							-->
+							<div class="text-center">
+								<video id="my-camera"  width="300" height="300" autoplay="autoplay" muted="true" class="center-block"></video>
+								<span class="label label-info">You</span>
+							</div>
+						</div>
+			
+						<div class="col-md-6 col-lg-6">
+							<!-- Display video of the connected peer -->
+							<div class="text-center">
+								<video id="peer-camera" width="300" height="300" autoplay="autoplay" class="center-block"></video>
+								<span class="label label-info" id="connected_peer"></span>
+							</div>
+						</div>
+				<div id="notifications"></div>
+			</div>
 			<div class="row" style="height:55vh;margin-right:0px;margin-left:0px;">
 				<div class="col-sm-4">
 					<div id="mydiv1" class="mydiv1">
@@ -645,17 +684,21 @@
 		var xmas;
 		var fan;
 		var marker;
-		var interviewer=true
+		var interviewer;
+		var user_text;
 		var parameters = location.search.substring(1).split("&");
         var conn;
+		var call;
 		var interviewer;
 		var Range = ace.require('ace/range').Range;
 		l = "<%- sender %>";
 		p = "<%- reciever %>";
-		if(<%- type %>)
+		if(<%- type %>){
 			interviewer=true;
+			user_text="Candidate: ";
+		}
 		else
-			interviewer=false;
+			user_text="Interviewer: ";
 		/*var sock_client = io.connect('https://enbiocrypts.nl');
 		sock_client.on('connect', function() {
 			console.log(`sock_client connect`);
@@ -673,6 +716,13 @@
         function connect(c) {
             conn = c;
             console.log('in connect', conn.peer);
+			Notify(user_text+"I'm Online..", null, null, "success");
+			call = peer.call(conn.peer, window.localStream);
+
+			call.on('stream', function (stream) {
+				window.peer_stream = stream;
+				onReceiveStream(stream, 'peer-camera');
+			});
             //$('#rid').val(conn.peer);
             //$('#rid').prop('disabled', true);
             //$('#progbar').width('100%');
@@ -713,6 +763,9 @@
 					document.getElementById("resize_op").value=data.message;
 				}
 			<% } %>
+				else if(data.action=="alert_log"){
+					Notify(user_text+data.message, null, null, data.type);
+				}
 				else{
 					yup=false
 					if(marker)
@@ -761,6 +814,7 @@
 				console.log("Candidate left");
 			});
 			conn.on('close',function(){
+				Notify(user_text+"I'm Disconnected..", null, null, "danger");
 				console.log("Candidate closed");
 			});
         }
@@ -882,7 +936,7 @@
 	
 	<% if (type) { %>
 		function res_po(){
-			var tes1=document.getElementById("resize_op").value.split('\n').join('<br>');
+			var tes1=document.getElementById("resize_op").value;
 			conn.send({action:"recieve_prob",message:tes1});
 		}
 	<% } %>
@@ -965,6 +1019,126 @@ function dragElement(elmnt) {
 })();
 </script>
 <% } %>
+<script>
+Notify = function(text, callback, close_callback, style) {
+
+	var time = '10000';
+	var $container = $('#notifications');
+	var icon = '<i class="fa fa-info-circle "></i>';
+ 
+	if (typeof style == 'undefined' ) style = 'warning'
+  
+	var html = $('<div class="alert alert-' + style + '  hide">' + icon +  " " + text + '</div>');
+  
+	$('<a>',{
+		text: '×',
+		class: 'button close',
+		style: 'padding-left: 10px;',
+		href: '#',
+		click: function(e){
+			e.preventDefault()
+			close_callback && close_callback()
+			remove_notice()
+		}
+	}).prependTo(html)
+
+	$container.prepend(html)
+	html.removeClass('hide').hide().fadeIn('slow')
+
+	function remove_notice() {
+		html.stop().fadeOut('slow').remove()
+	}
+	
+	var timer =  setInterval(remove_notice, time);
+
+	$(html).hover(function(){
+		clearInterval(timer);
+	}, function(){
+		timer = setInterval(remove_notice, time);
+	});
+	
+	html.on('click', function () {
+		clearInterval(timer)
+		callback && callback()
+		remove_notice()
+	});
+  
+  
+}
+</script>
+<script>
+
+    peer.on('call', function (call) {
+            // Answer the call with your own video/audio stream
+            call.answer(window.localStream);
+
+            // Receive data
+            call.on('stream', function (stream) {
+                // Store a global reference of the other user stream
+                window.peer_stream = stream;
+                // Display the stream of the other user in the peer-camera video element !
+                onReceiveStream(stream, 'peer-camera');
+            });
+
+            // Handle when the call finishes
+            call.on('close', function(){
+                //alert("The videocall has finished");
+            });
+
+            // use call.close() to finish a call
+    });
+
+    /**
+     * Starts the request of the camera and microphone
+     *
+     * @param {Object} callbacks
+     */
+    function requestLocalVideo(callbacks) {
+        // Monkeypatch for crossbrowser geusermedia
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+        // Request audio an video
+        navigator.getUserMedia({ audio: true, video: true }, callbacks.success , callbacks.error);
+    }
+
+    /**
+     * Handle the providen stream (video and audio) to the desired video element
+     *
+     * @param {*} stream
+     * @param {*} element_id
+     */
+    function onReceiveStream(stream, element_id) {
+        // Retrieve the video element according to the desired
+        var video = document.getElementById(element_id);
+        // Set the given stream as the video source
+        //video.src = window.URL.createObjectURL(stream);
+		video.srcObject=stream;
+        // Store a global reference of the stream
+        window.peer_stream = stream;
+    }
+
+    requestLocalVideo({
+        success: function(stream){
+            window.localStream = stream;
+            onReceiveStream(stream, 'my-camera');
+        },
+        error: function(err){
+            alert("Cannot get access to your camera and video !");
+            console.error(err);
+        }
+    });
+	<% if (!type) { %>
+		$(document).mouseleave(function () {
+			conn.send({action:"alert_log",message:"Cursor away from Window",type:"danger"});
+		});
+		function userCheated() {
+		// The user cheated by leaving this window (e.g opening another window)
+		// Do something
+			conn.send({action:"alert_log",message:"On another tab",type:"danger"});
+		}
+		window.onblur = userCheated;
+	<% } %>
+</script>
 <!--<script src="connection.js" type="text/javascript" charset="utf-8"></script>-->
 </body>
 </html>
