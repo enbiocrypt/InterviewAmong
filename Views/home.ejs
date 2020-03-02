@@ -992,7 +992,16 @@ function dragElement(elmnt) {
 </script>
 <% if (!type) { %>
 <script type="text/javascript">
-
+function testres(){
+		if(screen.availWidth - window.innerWidth === 0){
+			document.getElementById("mobv").style.visibility="hidden";
+			document.getElementById("container").style.visibility="visible";
+		}
+		else{
+			document.getElementById("mobv").style.visibility="visible";
+			document.getElementById("container").style.visibility="hidden";
+		}
+	}
 (function(){
  
  var preload = document.getElementById("preload");
@@ -1006,6 +1015,7 @@ function dragElement(elmnt) {
 			clearInterval(id);
 			document.getElementById("preload").style.visibility="hidden";
 			document.getElementById("container").style.visibility="visible";
+			window.addEventListener('resize', testres);
 		}
 		else {
 			loading = loading + 1;
@@ -1140,18 +1150,7 @@ Notify = function(text, callback, close_callback, style) {
 		}
 		window.onblur = userCheated;
 	<% } %>
-	window.addEventListener('resize', testres)
-	function testres(){
-		if(screen.availWidth - window.innerWidth === 0){
-			document.getElementById("mobv").style.visibility="hidden";
-			document.getElementById("container").style.visibility="visible";
-		}
-		else{
-			document.getElementById("mobv").style.visibility="visible";
-			document.getElementById("container").style.visibility="hidden";
-		}
-	}
-	testres();
+	
 </script>
 <!--<script src="connection.js" type="text/javascript" charset="utf-8"></script>-->
 </body>
