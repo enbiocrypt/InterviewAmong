@@ -357,6 +357,8 @@
 <div id="container" style="visibility:hidden">
 <% } %>
 
+<div id="mobv" class="col-md-12" style="visibility:hidden;position: absolute;text-align: center;background: antiquewhite;"><span style="font-size: x-large;">Please Maximize Your Window</span></div>
+
 <% if (type) { %>
 	<div id="container">
 <% } %>
@@ -1138,6 +1140,18 @@ Notify = function(text, callback, close_callback, style) {
 		}
 		window.onblur = userCheated;
 	<% } %>
+	window.addEventListener('resize', testres)
+	function testres(){
+		if(screen.availWidth - window.innerWidth === 0){
+			document.getElementById("mobv").style.visibility="hidden";
+			document.getElementById("container").style.visibility="visible";
+		}
+		else{
+			document.getElementById("mobv").style.visibility="visible";
+			document.getElementById("container").style.visibility="hidden";
+		}
+	}
+	testres();
 </script>
 <!--<script src="connection.js" type="text/javascript" charset="utf-8"></script>-->
 </body>
