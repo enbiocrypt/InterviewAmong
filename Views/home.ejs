@@ -18,9 +18,14 @@
 	<script src="https://cdn.jsdelivr.net/npm/peerjs@1.0.0/dist/peerjs.min.js"></script>
 	<script src="scripts/peerjs.min.js"></script>-->
 	<script src="autosize/dist/autosize.min.js"></script>
+	<script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="ace/ext-language_tools.js"></script>
 </head>
 
 <style>
+.custom-control-label::before, .custom-file-label, .custom-select{
+	background-color: #007bff;
+}
 #my-camera
 {
     transform: rotateY(180deg);
@@ -241,10 +246,27 @@
   border: 1px solid #d3d3d3
 }
 
+#mydiv3 {
+  position: absolute;
+  z-index: 9;
+  background-color: #f1f1f1;
+  text-align: center;
+  border: 1px solid #d3d3d3
+}
+
 #mydiv1header {
   cursor: move;
   z-index: 10;
   background-color: #2196F3;
+  color: #fff;
+  text-align-last: left;
+  font-weight: lighter;
+}
+
+#mydiv3header {
+  cursor: move;
+  z-index: 10;
+  background-color: indianred;
   color: #fff;
   text-align-last: left;
   font-weight: lighter;
@@ -268,6 +290,12 @@
 #mydiv2header {
   z-index: 10;
   background-color: #2196F3;
+  color: #fff;
+}
+
+#mydiv4header {
+  z-index: 10;
+  background-color: indianred;
   color: #fff;
 }
 .resize_op {
@@ -338,6 +366,18 @@
  from {opacity: 1;}
  to {opacity: 0;}
 }
+
+.active, .collapsible:hover {
+  background-color: #555;
+}
+
+.content {
+  position:fixed;
+  padding: 5px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
 </style>
 
 <body>
@@ -388,25 +428,36 @@
 		<div class="panel-left" style="height: 100vh;background: #535353;padding-left:5px;padding-right:0px;">
 				<div style="display:inline-flex;padding:5;width:100%">
 					<div class="col-lg-6">
-						<select id="selection" class="dropright btn btn-primary dropdown-toggle" onchange="seteditor()" style="border-radius: 15px;">
+						<select id="selection" class="custom-select btn btn-primary dropdown-toggle" onchange="seteditor()" style="border-radius: 15px;width:auto;border:none;color: aliceblue;">
 							<option value="python3">Python 3.5.3</option>
 							<option value="python2">Python 2.7.13</option>
 							<option value="java">Java 1.8.0</option>
 							<option value="c">C (gcc 6.3.0)</option>
 							<option value="cpp">C++ (gcc 6.3.0)</option>
 							<option value="javascript">JavaScript</option>
+							<option value="mysql">Mysql</option>
+							<option value="R">R</option>
 						</select>
 					</div>
-					<div class="col-sm-4" style="display: flex;justify-content: flex-end;align-items: center;">
-						<div style="align: center;" class="dropdown">
+					<div class="col-sm-3"></div>
+					<div class="col-sm-1" style="align-self: center;">
+						<!--<button type="button" class="collapsible">Open Collapsible</button>
+						<div class="content" style="position:absolute;z-index:2000">
+							<textarea id="input" placeholder="Inputs Here..."></textarea>
+						</div>-->
+						<a href="" data-toggle="button" aria-expanded="false"><i class="fa fa-share-square fa-2x collapsible" title="Input"></i></a>
+						<div class="content" id="content" style="position:absolute;z-index:2000">
+							<textarea id="input" placeholder="Inputs Here..."></textarea>
+						</div>
+						<!--<div style="align: center;" class="dropdown">
 							<a href="" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-sign-in fa-2x"></i></a>
 							<div class="dropdown-menu" style="">
 								<a href="#" class="dropdown-item"><textarea id="input" placeholder="Inputs Here..."></textarea></a>
 							</div>
-						</div>
+						</div>-->
 					</div>
 					<div class="col-sm-2" align="right">
-						<button id="exec" type="button" class="btn btn-primary" onclick="submit()"><i class="fa fa-chevron-right"></i> Run</button>
+						<button id="exec" type="button" class="btn btn-primary" onclick="submit()" style="border-radius: 15px;"><i class="fa fa-chevron-right"></i> Run</button>
 					</div>
 				</div>
 			<div id="editor" class="panel-top"></div>
@@ -415,28 +466,38 @@
 		</div>
 		<div class="splitter"></div>
 		<div class="panel-right" style="background:#272822;">
-				<div class="row" style="height:45vh;margin-right:0px;margin-left:0px;">
+			<div style="display:inline-flex;padding:5;width:100%;justify-content: flex-end;">
+				<% if (type) { %>
+					<div style="padding-right:10">
+						<button id="exec" type="button" class="btn btn-info" onclick="submit()" style="border-radius: 15px;">Logs</button>
+					</div>
+					<div>
+						<button id="exec" type="button" class="btn btn-danger" onclick="submit()" style="border-radius: 15px;">End Test</button>
+					</div>
+				<% } %>
+			</div>
+			<div class="row" style="height:45vh;margin-right:0px;margin-left:0px;">
 						<div class="col-md-6 col-lg-6">
 							<!-- 
 								Display video of the current user
 								Note: mute your own video, otherwise you'll hear yourself ...
 							-->
-							<div class="text-center">
-								<video id="my-camera"  width="300" height="300" autoplay="autoplay" muted="true" class="center-block"></video>
-								<span class="label label-info">You</span>
-							</div>
+							<!--<div class="text-center">-->
+								<video id="my-camera"  width="100%" height="100%" autoplay="autoplay" muted="true" class="center-block"></video>
+								<!--<span class="label label-info">You</span>-->
+							<!--</div>-->
 						</div>
 			
 						<div class="col-md-6 col-lg-6">
 							<!-- Display video of the connected peer -->
-							<div class="text-center">
-								<video id="peer-camera" width="300" height="300" autoplay="autoplay" class="center-block"></video>
-								<span class="label label-info" id="connected_peer"></span>
-							</div>
+							<!--<div class="text-center">-->
+								<video id="peer-camera" width="100%" height="100%" autoplay="autoplay" class="center-block"></video>
+								<!--<span class="label label-info" id="connected_peer"></span>-->
+							<!--</div>-->
 						</div>
 				<div id="notifications"></div>
 			</div>
-			<div class="row" style="height:55vh;margin-right:0px;margin-left:0px;">
+			<div class="row" style="height:45vh;margin-right:0px;margin-left:0px;">
 				<div class="col-sm-4">
 					<div id="mydiv1" class="mydiv1">
 						<div style="display:flex">
@@ -454,7 +515,20 @@
 							<textarea class="resize_op" id="resize_op" disabled></textarea>
 						<% } %>
 					</div>
-					<div style="display:flex;bottom: 0;position: absolute;visibility:hidden;" id="prob_h">
+					<% if (type) { %>
+						<div id="mydiv3" class="mydiv3" style="top: 34px; left: 28px;">
+							<div style="display:flex">
+								<div id="mydiv3header" class="col-sm-10">Logger</div>
+									<div id="mydiv4header" class="col-sm-2">
+										<div class="options-right" style="display:flex;justify-content:flex-end;padding-top:5px">
+											<i class="fa fa-times fa-lg hide-chat-box"></i>
+										</div>	
+									</div>
+							</div>
+								<textarea class="resize_op" id="resize_op" disabled></textarea>
+						</div>
+					<% } %>
+					<div style="display:flex;bottom: 5;position: fixed;visibility:hidden;" id="prob_h">
 							<div id="mydiv1header1" class="col-sm-10">Problems</div>
 								<div id="mydiv2header1" class="col-sm-2">
 									<div class="options-right" style="display:flex;justify-content:flex-end;padding-right:15px;">
@@ -522,8 +596,6 @@
 	</div>
 </div>
 
-<script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
-
 <script>
 	var state1=true;
 	var statei=true;
@@ -551,6 +623,9 @@
 			statei=true;
 		}
 	});
+	$('.hide-chat-box2').click(function(){
+		document.getElementById("mydiv3").style.visibility="hidden";
+	});
 	/*var parameters = location.search.substring(1).split("&");
 	var peer;
 	var conn;
@@ -566,9 +641,15 @@
 	}*/
 	var temp;
 	var arr=[];
+	ace.require("ace/ext/language_tools");
 	window.ep=ace.edit("editor");
 	ep.getSession().setUseWrapMode(true);
-	ep.setOption("indentedSoftWrap", false);
+	//ep.setOption("indentedSoftWrap", false);
+	ep.setOptions({
+		indentedSoftWrap:true,
+		enableBasicAutocompletion: true,
+		enableLiveAutocompletion: true
+	});
 	ep.setShowPrintMargin(false);
 	ep.setFontSize(16);
 	ep.setTheme("ace/theme/monokai");
@@ -597,9 +678,17 @@
 			//temp=4;
 			ep.session.setMode("ace/mode/java");
 		}
+		else if(x=="mysql"){
+			//temp=4;
+			ep.session.setMode("ace/mode/mysql");
+		}
 		else if(x=="javascript"){
 			//temp=4;
 			ep.session.setMode("ace/mode/javascript");
+		}
+		else if(x=="R"){
+			//temp=4;
+			ep.session.setMode("ace/mode/r");
 		}
 		/*
 		if(arr[temp])
@@ -640,6 +729,7 @@
 				}
 		xhr.send(JSON.stringify({carrier : ep.getSession().getValue(), carrier_ip : document.getElementById("input").value}));
 	}
+	
 	/*
 	ep.on("change", function(e){
 		conn = peer.connect(p, {host: 'localhost', port: 3000, path: '/api'});
@@ -948,6 +1038,7 @@
 //Make the DIV element draggagle:
 
 dragElement(document.getElementById("mydiv1"));
+dragElement(document.getElementById("mydiv3"));
 
 function dragElement(elmnt) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -1142,6 +1233,26 @@ Notify = function(text, callback, close_callback, style) {
 	<% } %>
 	
 	
+</script>
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var fr=false
+  coll[0].addEventListener("click", function() {
+    var content = document.getElementsByClassName("content")[0];
+		if (content.style.display === "block") {
+			content.style.display = "none";
+		} else {
+			content.style.display = "block";
+			$('#input').focus();
+		}
+	console.log("click ");
+  });
+</script>
+<script>
+$('#content').focusout(function(ev)
+{
+   $('#content').hide();
+});
 </script>
 <!--<script src="connection.js" type="text/javascript" charset="utf-8"></script>-->
 </body>

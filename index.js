@@ -10,6 +10,8 @@ const ExpressPeerServer = require('peer').ExpressPeerServer;
 const path = require('path');
 const app = express();
 var MySql = require('sync-mysql');
+var R = require("r-script");
+const { exec } = require('child_process');
 
 const sslop = {
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
@@ -150,6 +152,69 @@ app.post('/compile/:feedsId',(req,res) => {
 		})
 		.catch(err => {
 			res.end("Server Error");
+		});
+	}
+	else if(req.params.feedsId=="mysql"){
+		var mysql = require('mysql');
+		var connection = mysql.createConnection({host: "localhost", user: "root", password: "", database: "ibdb", port: 3306});
+		var quer = req.body.carrier;
+		var ls={};
+		var ps=[];
+		var temp=false
+		connection.connect(function(err) {
+			if (err)
+				res.end(JSON.stringify({ result_output: err }));
+			connection.query(quer, function (err, result, fields) {
+				if (err)
+					res.end(JSON.stringify({ result_output: err }));
+				for(var i=0;i<result.length;i++){
+					var tmp=[]
+					var tmp1=[]
+					for(var j in result[i]){
+						if(!temp)
+							tmp.push(j)
+						
+						tmp1.push(result[i][j])
+						/*if(j in ls)
+							ls[j].push(result[i][j])
+						else{
+							ls[j]=[]
+							ls[j].push(result[i][j])
+						}*/
+					}
+					if(!temp){
+						ps.push(tmp.join("\t"))
+					}
+					ps.push(tmp1.join("\t"))
+					temp = true
+				}
+				if(result.message)
+					ps.push(result.message)
+				console.log(ps.join("\n"))
+				res.end(JSON.stringify({ result_output: {"stdout":ps.join("\n")} }));
+			});
+			connection.end();
+		});
+	}
+	else if(req.params.feedsId=="R"){
+		exec(`echo ${req.body.carrier} | tee logfile.R`, (err, stdout, stderr) => {
+		if (err) {
+			//some err occurred
+			res.end(err);
+			} else {
+			// the *entire* stdout and stderr (buffered)
+			console.log(`stdout: ${stdout}`);
+			console.log(`stderr: ${stderr}`);
+			}
+		});
+		exec(`Rscript logfile.R`, (err, stdout, stderr) => {
+		if (err) {
+			//some err occurred
+			res.end(err);
+			} else {
+			// the *entire* stdout and stderr (buffered)
+			res.end(JSON.stringify({ result_output: stdout+stderr }));
+			}
 		});
 	}
 	else{
