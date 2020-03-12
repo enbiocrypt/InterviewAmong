@@ -11,7 +11,7 @@ const path = require('path');
 const app = express();
 var MySql = require('sync-mysql');
 var R = require("r-script");
-const { exec } = require('child_process');
+var shell = require('shelljs');
 
 const sslop = {
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
@@ -197,7 +197,19 @@ app.post('/compile/:feedsId',(req,res) => {
 		});
 	}
 	else if(req.params.feedsId=="R"){
-		exec(`echo ${req.body.carrier} | tee /home/logfile.R`, (err, stdout, stderr) => {
+		console.log(`echo ${req.body.carrier} | tee /home/logfile.R`)
+		var tr = shell.exec(`echo ${req.body.carrier} | tee /home/logfile.R`)
+		if(tr.code==0){
+			var tr1 = shell.exec(`Rscript /home/logfile.R`)
+			if(tr1.code==0)
+				res.end(JSON.stringify({ result_output: {stdout:tr1.stdout} }));
+			else
+				res.end(JSON.stringify({ result_output: {stdout:tr1.stderr} }));
+		}
+		else
+			res.end(JSON.stringify({ result_output: {stdout:tr.stderr} }));
+			
+		/*exec(`echo ${req.body.carrier} | tee /home/logfile.R`, (err, stdout, stderr) => {
 		if (err) {
 			//some err occurred
 			res.end(err);
@@ -216,7 +228,7 @@ app.post('/compile/:feedsId',(req,res) => {
 			console.log(stdout+stderr);
 			res.end(JSON.stringify({ result_output: {stdout:stdout+stderr} }));
 			}
-		});
+		});*/
 	}
 	else{
 		res.end("Wrong Selection");
