@@ -213,7 +213,8 @@ app.post('/compile/:feedsId',(req,res) => {
 			res.end(err);
 			} else {
 			// the *entire* stdout and stderr (buffered)
-			res.end(JSON.stringify({ result_output: stdout+stderr }));
+			console.log(stdout+stderr);
+			res.end(JSON.stringify({ result_output: {stdout:stdout+stderr} }));
 			}
 		});
 	}
