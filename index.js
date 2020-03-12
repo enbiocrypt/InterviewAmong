@@ -197,7 +197,7 @@ app.post('/compile/:feedsId',(req,res) => {
 		});
 	}
 	else if(req.params.feedsId=="R"){
-		exec(`echo ${req.body.carrier} | tee logfile.R`, (err, stdout, stderr) => {
+		exec(`echo ${req.body.carrier} | tee /home/logfile.R`, (err, stdout, stderr) => {
 		if (err) {
 			//some err occurred
 			res.end(err);
@@ -207,7 +207,7 @@ app.post('/compile/:feedsId',(req,res) => {
 			console.log(`stderr: ${stderr}`);
 			}
 		});
-		exec(`Rscript logfile.R`, (err, stdout, stderr) => {
+		exec(`Rscript /home/logfile.R`, (err, stdout, stderr) => {
 		if (err) {
 			//some err occurred
 			res.end(err);
