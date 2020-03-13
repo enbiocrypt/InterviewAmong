@@ -8,6 +8,7 @@
 	<script src="popper.js/dist/umd/popper.min.js"></script>
 	<script src="bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="webrtc-adapter/out/adapter.js"></script>
+	<script src="moment/moment.js"></script>
 	<script src="jquery-resizable-dom/dist/jquery-resizable.min.js"></script>
 	<link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
@@ -525,7 +526,7 @@
 										</div>	
 									</div>
 							</div>
-								<textarea class="resize_op" id="resize_op" disabled></textarea>
+								<textarea class="resize_op" id="resize_op1" disabled></textarea>
 						</div>
 					<% } %>
 					<div style="display:flex;bottom: 5;position: fixed;visibility:hidden;" id="prob_h">
@@ -808,7 +809,12 @@
         function connect(c) {
             conn = c;
             console.log('in connect', conn.peer);
-			Notify(user_text+"I'm Online..", null, null, "success");
+			<% if (type) { %>
+				Notify(user_text+"I'm Online..", null, null, "success");
+				document.getElementById("resize_op1").value=document.getElementById("resize_op1").value+moment().format()+">>"+user_text+"I'm Online.."+"\n"
+			<% } else { %>
+				Notify(user_text+"I'm Online..", null, null, "success");
+			<% } %>
 			call = peer.call(conn.peer, window.localStream);
 
 			call.on('stream', function (stream) {
@@ -856,6 +862,9 @@
 				}
 			<% } %>
 				else if(data.action=="alert_log"){
+					<% if (type) { %>
+						document.getElementById("resize_op1").value=document.getElementById("resize_op1").value+moment().format()+">>"+user_text+data.message+"\n"
+					<% } %>
 					Notify(user_text+data.message, null, null, data.type);
 				}
 				else{
@@ -906,7 +915,12 @@
 				console.log("Candidate left");
 			});
 			conn.on('close',function(){
-				Notify(user_text+"I'm Disconnected..", null, null, "danger");
+				<% if (type) { %>
+					document.getElementById("resize_op1").value=document.getElementById("resize_op1").value+moment().format()+">>"+user_text+"I'm Disconnected.."+"\n"
+					Notify(user_text+"I'm Disconnected..", null, null, "danger");
+				<% } else { %>
+					Notify(user_text+"I'm Disconnected..", null, null, "danger");
+				<% } %>
 				console.log("Candidate closed");
 			});
         }

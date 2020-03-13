@@ -78,6 +78,7 @@ app.post('/compile/:feedsId',(req,res) => {
 	if(req.params.feedsId=="python2"){
 		let resultPromise = python.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
 		resultPromise.then(result => {
+			console.log(result);
 			if(result.stderr){
 				var n=result.stderr.search("-")+1;
 				result.stderr=result.stderr.substring(n);
@@ -197,8 +198,8 @@ app.post('/compile/:feedsId',(req,res) => {
 		});
 	}
 	else if(req.params.feedsId=="R"){
-		console.log(`echo ${req.body.carrier} | tee /home/logfile.R`)
-		var tr = shell.exec(`echo ${req.body.carrier} | tee /home/logfile.R`)
+		console.log(`echo "${req.body.carrier}" | tee /home/logfile.R`)
+		var tr = shell.exec(`echo "${req.body.carrier}" | tee /home/logfile.R`)
 		if(tr.code==0){
 			var tr1 = shell.exec(`Rscript /home/logfile.R`)
 			if(tr1.code==0)
