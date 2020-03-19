@@ -438,6 +438,8 @@
 							<option value="javascript">JavaScript</option>
 							<option value="mysql">Mysql</option>
 							<option value="R">R</option>
+							<option value="Ruby">Ruby</option>
+							<option value="C#">C#</option>
 						</select>
 					</div>
 					<div class="col-sm-3"></div>
@@ -470,33 +472,33 @@
 			<div style="display:inline-flex;padding:5;width:100%;justify-content: flex-end;">
 				<% if (type) { %>
 					<div style="padding-right:10">
-						<button id="exec" type="button" class="btn btn-info" onclick="submit()" style="border-radius: 15px;">Logs</button>
+						<button id="exec" type="button" class="btn btn-info" onclick="hide_logs()" style="border-radius: 15px;">Logs</button>
 					</div>
 					<div>
 						<button id="exec" type="button" class="btn btn-danger" onclick="submit()" style="border-radius: 15px;">End Test</button>
 					</div>
 				<% } %>
 			</div>
-			<div class="row" style="height:45vh;margin-right:0px;margin-left:0px;">
-						<div class="col-md-6 col-lg-6">
+			<div class="row" style="height:35vh;margin-right:0px;margin-left:0px;justify-content:flex-end;">
+						<div style="position:relative;">
 							<!-- 
 								Display video of the current user
 								Note: mute your own video, otherwise you'll hear yourself ...
 							-->
 							<!--<div class="text-center">-->
-								<video id="my-camera"  width="100%" height="100%" autoplay="autoplay" muted="true" class="center-block"></video>
+								<video id="peer-camera" height="100%" width="100%" autoplay="autoplay" muted="true" class="center-block" style="padding:10;object-position:left;"></video>
 								<!--<span class="label label-info">You</span>-->
 							<!--</div>-->
-						</div>
-			
-						<div class="col-md-6 col-lg-6">
-							<!-- Display video of the connected peer -->
-							<!--<div class="text-center">-->
-								<video id="peer-camera" width="100%" height="100%" autoplay="autoplay" class="center-block"></video>
+							<div style="position:absolute;width: 40%;height: 40%;bottom: 0;right: 0;justify-content: flex-end;display: flex;">
+								<!-- Display video of the connected peer -->
+								<!--<div class="text-center">-->
+								<video id="my-camera" height="100%" autoplay="autoplay" class="center-block" style="padding:10;object-position:left;"></video>
 								<!--<span class="label label-info" id="connected_peer"></span>-->
-							<!--</div>-->
+								<!--</div>-->
+							</div>
 						</div>
-				<div id="notifications"></div>
+			</div>
+			<div class="row" style="height:10vh;margin-right:0px;margin-left:0px;justify-content:flex-end;">
 			</div>
 			<div class="row" style="height:45vh;margin-right:0px;margin-left:0px;">
 				<div class="col-sm-4">
@@ -522,7 +524,7 @@
 								<div id="mydiv3header" class="col-sm-10">Logger</div>
 									<div id="mydiv4header" class="col-sm-2">
 										<div class="options-right" style="display:flex;justify-content:flex-end;padding-top:5px">
-											<i class="fa fa-times fa-lg hide-chat-box"></i>
+											<i class="fa fa-times fa-lg hide-chat-box2"></i>
 										</div>	
 									</div>
 							</div>
@@ -691,6 +693,14 @@
 			//temp=4;
 			ep.session.setMode("ace/mode/r");
 		}
+		else if(x=="Ruby"){
+			//temp=4;
+			ep.session.setMode("ace/mode/ruby");
+		}
+		else if(x=="C#"){
+			//temp=4;
+			ep.session.setMode("ace/mode/csharp");
+		}
 		/*
 		if(arr[temp])
 			ep.setValue(arr[temp],1);
@@ -729,6 +739,9 @@
 					document.getElementById("exec").disabled=false;
 				}
 		xhr.send(JSON.stringify({carrier : ep.getSession().getValue(), carrier_ip : document.getElementById("input").value}));
+	}
+	function hide_logs(){
+		document.getElementById("mydiv3").style.visibility="visible";
 	}
 	
 	/*

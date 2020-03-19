@@ -210,26 +210,34 @@ app.post('/compile/:feedsId',(req,res) => {
 		else
 			res.end(JSON.stringify({ result_output: {stdout:tr.stderr} }));
 			
-		/*exec(`echo ${req.body.carrier} | tee /home/logfile.R`, (err, stdout, stderr) => {
-		if (err) {
-			//some err occurred
-			res.end(err);
-			} else {
-			// the *entire* stdout and stderr (buffered)
-			console.log(`stdout: ${stdout}`);
-			console.log(`stderr: ${stderr}`);
-			}
-		});
-		exec(`Rscript /home/logfile.R`, (err, stdout, stderr) => {
-		if (err) {
-			//some err occurred
-			res.end(err);
-			} else {
-			// the *entire* stdout and stderr (buffered)
-			console.log(stdout+stderr);
-			res.end(JSON.stringify({ result_output: {stdout:stdout+stderr} }));
-			}
-		});*/
+	}
+	else if(req.params.feedsId=="Ruby"){
+		console.log(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
+		var tr = shell.exec(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
+		if(tr.code==0){
+			var tr1 = shell.exec(`ruby /home/logfile.rb`)
+			if(tr1.code==0)
+				res.end(JSON.stringify({ result_output: {stdout:tr1.stdout} }));
+			else
+				res.end(JSON.stringify({ result_output: {stdout:tr1.stderr} }));
+		}
+		else
+			res.end(JSON.stringify({ result_output: {stdout:tr.stderr} }));
+			
+	}
+	else if(req.params.feedsId=="C#"){
+		console.log(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
+		var tr = shell.exec(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
+		if(tr.code==0){
+			var tr1 = shell.exec(`ruby /home/logfile.rb`)
+			if(tr1.code==0)
+				res.end(JSON.stringify({ result_output: {stdout:tr1.stdout} }));
+			else
+				res.end(JSON.stringify({ result_output: {stdout:tr1.stderr} }));
+		}
+		else
+			res.end(JSON.stringify({ result_output: {stdout:tr.stderr} }));
+			
 	}
 	else{
 		res.end("Wrong Selection");
