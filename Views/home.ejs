@@ -426,6 +426,11 @@
 	</div>
 </div> -->
 	<div style="display:flex">
+		<div>
+			<nav class="navbar fixed-left navbar-light bg-light">
+				<a class="navbar-brand" href="#"></a>
+			</nav>
+		</div>
 		<div class="panel-left" style="height: 100vh;background: #535353;padding-left:5px;padding-right:0px;">
 				<div style="display:inline-flex;padding:5;width:100%">
 					<div class="col-lg-6">
@@ -479,20 +484,20 @@
 					</div>
 				<% } %>
 			</div>
-			<div class="row" style="height:35vh;margin-right:0px;margin-left:0px;justify-content:flex-end;">
+			<div class="row" style="height:35vh;margin-right:0px;margin-left:0px;justify-content:flex-end;padding:10">
 						<div style="position:relative;">
 							<!-- 
 								Display video of the current user
 								Note: mute your own video, otherwise you'll hear yourself ...
 							-->
 							<!--<div class="text-center">-->
-								<video id="peer-camera" height="100%" width="100%" autoplay="autoplay" muted="true" class="center-block" style="padding:10;object-position:left;"></video>
+								<video id="peer-camera" height="100%" width="300" autoplay="autoplay" muted="true" class="center-block" style="object-position:left;object-fit:fill;border:ridge;"></video>
 								<!--<span class="label label-info">You</span>-->
 							<!--</div>-->
-							<div style="position:absolute;width: 40%;height: 40%;bottom: 0;right: 0;justify-content: flex-end;display: flex;">
+							<div style="position:absolute;width: 30%;height: 30%;bottom: 0;right: 0;justify-content: flex-end;display: flex;">
 								<!-- Display video of the connected peer -->
 								<!--<div class="text-center">-->
-								<video id="my-camera" height="100%" autoplay="autoplay" class="center-block" style="padding:10;object-position:left;"></video>
+								<video id="my-camera" height="100%" autoplay="autoplay" class="center-block" muted="true" style="object-position:left;object-fit:fill;border:ridge;width:100%"></video>
 								<!--<span class="label label-info" id="connected_peer"></span>-->
 								<!--</div>-->
 							</div>

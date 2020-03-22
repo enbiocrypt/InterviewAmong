@@ -226,10 +226,10 @@ app.post('/compile/:feedsId',(req,res) => {
 			
 	}
 	else if(req.params.feedsId=="C#"){
-		console.log(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
+		console.log(`echo "${req.body.carrier}" | tee /home/logfile.c`)
 		var tr = shell.exec(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
 		if(tr.code==0){
-			var tr1 = shell.exec(`ruby /home/logfile.rb`)
+			var tr1 = shell.exec(`csc /home/logfile.cs`)
 			if(tr1.code==0)
 				res.end(JSON.stringify({ result_output: {stdout:tr1.stdout} }));
 			else
