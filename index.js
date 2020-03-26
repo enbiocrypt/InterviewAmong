@@ -165,7 +165,7 @@ app.post('/send',(req,res) => {
 	mailTransporter.sendMail(ImailDetails, function(err, data) { 
 		if(err) { 
 			console.log("Check Interviewer's mail"); 
-			res.end("Check Interviewer's mail"); 
+			return res.end("Check Interviewer's mail"); 
 		} else { 
 			console.log('Email sent successfully'); 
 		} 
@@ -173,12 +173,12 @@ app.post('/send',(req,res) => {
 	mailTransporter.sendMail(CmailDetails, function(err, data) { 
 		if(err) { 
 			console.log("Check Candidate's mail"); 
-			res.end("Check Candidate's mail");
+			return res.end("Check Candidate's mail");
 		} else { 
 			console.log('Email sent successfully'); 
 		} 
 	}); 
-	res.end("Updated");
+	return res.end("Updated");
 	//res.sendFile(__dirname+'/Public/index.html');
 });
 

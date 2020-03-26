@@ -14,6 +14,7 @@
     "angular": "^1.7.9",
     "autosize": "^4.0.2",
     "bootstrap": "^4.4.1",
+    "bufferutil": "^4.0.1",
     "compile-run": "^2.3.2",
     "connect-redis": "^4.0.4",
     "ejs": "^3.0.1",
@@ -30,7 +31,7 @@
     "node-ssh": "^8.0.0",
     "node-ssh-exec": "^0.1.1",
     "nodemailer": "^6.4.6",
-    "peer": "^0.2.10",
+    "peer": "^0.5.1",
     "peerjs": "^1.2.0",
     "popper.js": "^1.16.1",
     "python-shell": "^1.0.8",
@@ -42,6 +43,7 @@
     "sync-mysql": "^3.0.1",
     "tail.datetime": "^0.4.13",
     "three-dots": "^0.2.0",
+    "utf-8-validate": "^5.0.2",
     "webrtc-adapter": "^7.5.0"
   }
 }
