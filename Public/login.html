@@ -1,0 +1,31 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="../node_modules/jquery/dist/jquery.min.js"></script>
+	<script src="../node_modules/popper.js/dist/umd/popper.min.js"></script>
+	<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+<body style="display: grid;place-content: center;background: linear-gradient(to bottom right, #33ccff 0%, #ff99cc 100%);">
+<h2 style="text-align: center;">Admin Portal</h2>
+<div class="dropdown-menu" style="display:block;position:initial;">
+  <form class="px-4 py-3" onsubmit="din()" action="#"> 
+    <div class="form-group">
+      <label for="exampleDropdownFormEmail1">Email address</label>
+      <input type="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="email@example.com">
+    </div>
+    <div class="form-group">
+      <label for="exampleDropdownFormPassword1">Password</label>
+      <input type="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Password">
+    </div>
+    <button type="submit" class="btn btn-primary">Sign in</button>
+  </form>
+</div>
+</body>
+<script>
+function din(){
+	alert("Diensh");
+}
+</script>
+</html>

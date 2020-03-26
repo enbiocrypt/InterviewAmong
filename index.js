@@ -1,6 +1,7 @@
 const express = require('express'),
      http = require('http');
 const fs = require('fs');
+const nodemailer = require('nodemailer');
 const session = require('express-session');
 const {c, cpp, node, python, java} = require('compile-run');
 const bodyParser = require('body-parser');
@@ -9,6 +10,8 @@ const https = require('https');
 const ExpressPeerServer = require('peer').ExpressPeerServer;
 const path = require('path');
 const app = express();
+var md5 = require('md5');
+var moment=require("moment");
 var MySql = require('sync-mysql');
 var R = require("r-script");
 var shell = require('shelljs');
@@ -53,6 +56,15 @@ app.use('/api', peer);
 });
 //port = process.env.PORT || 3000;
 */
+app.get('/home',(req,res) => {
+	res.render('home',{port:port});
+	//res.sendFile(__dirname+'/Public/index.html');
+});
+
+app.get('/admin_portal',(req,res) => {
+	res.render('admin');
+	//res.sendFile(__dirname+'/Public/index.html');
+});
 
 app.get('/:pop',(req,res) => {
 	var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
@@ -68,11 +80,58 @@ app.get('/:pop',(req,res) => {
 	//res.sendFile(index);
 });
 
-
-app.get('/home',(req,res) => {
-	res.render('home',{port:port});
+app.post('/send',(req,res) => {
+	var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+	var itemp=md5(md5(req.body.CEmail1)+md5(moment().format('LTS')));
+	var ctemp=md5(md5(req.body.IEmail1)+md5(moment().format('LTS')));
+	var sender=md5(md5(req.body.IEmail1)+md5(req.body.CEmail1)+md5(moment().format('LTS')));
+	var reciever=md5(md5(req.body.CEmail1)+md5(req.body.IEmail1)+md5(moment().format('LTS')));
+	console.log(`insert into interdemo values('${itemp}','${sender}','${reciever}')`);
+	quer = `insert into interdemo values('${itemp}','${sender}','${reciever}',0)`;
+	quer1 = `insert into interdemo values('${ctemp}','${reciever}','${sender}',1)`;
+	var result = connection.query(quer);
+	var result1 = connection.query(quer1);
+	console.log(req.body.CTag1);
+	var vtag=req.body.CTag1;
+	var ttag=vtag.join(",");
+	console.log(result,result1);
+	let mailTransporter = nodemailer.createTransport({ 
+    service: 'gmail', 
+    auth: { user: 'enbiocrypt@gmail.com', 
+			pass: 'rahouigakxkhvuwd' }
+	});
+	let CmailDetails = { 
+		from: 'enbiocrypt@gmail.com', 
+		to: `${req.body.CEmail1}`, 
+		subject: 'Your Interview Has been Scheduled', 
+		html: `Your Interview is on <b> ${req.body.Date} </b> at <b> ${req.body.Time}</b> <br> Link: http://enbiocrypts.nl/${itemp}`
+	};
+	let ImailDetails = { 
+		from: 'enbiocrypt@gmail.com', 
+		to: `${req.body.IEmail1}`, 
+		subject: 'An Interview Has been Scheduled', 
+		html: `An Interview is scheduled on <b>${req.body.Date}</b> at <b>${req.body.Time}</b><br>Candidate with Skill Set: <b>${ttag}</b><br>Link: http://enbiocrypts.nl/${ctemp}`
+	};
+	mailTransporter.sendMail(ImailDetails, function(err, data) { 
+		if(err) { 
+			console.log("Check Interviewer's mail"); 
+			res.end("Check Interviewer's mail"); 
+		} else { 
+			console.log('Email sent successfully'); 
+		} 
+	});
+	mailTransporter.sendMail(CmailDetails, function(err, data) { 
+		if(err) { 
+			console.log("Check Candidate's mail"); 
+			res.end("Check Candidate's mail");
+		} else { 
+			console.log('Email sent successfully'); 
+		} 
+	}); 
+	res.end("Updated");
 	//res.sendFile(__dirname+'/Public/index.html');
 });
+
 
 app.post('/compile/:feedsId',(req,res) => {
 	if(req.params.feedsId=="python2"){

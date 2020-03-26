@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <link type="text/css" rel="stylesheet" href="../node_modules/tail.datetime/css/tail.datetime-default-red.css" />
+		<script src="../node_modules/moment/moment.js"></script>
+        <!-- Additional Stylesheets -->
+    </head>
+    <body>
+        <script type="text/javascript" src="../node_modules/tail.datetime/js/tail.datetime.min.js"></script>
+        <!-- <script type="text/javascript" src="langs/tail.datetime-{lang}.js"></script> -->
+
+        <input type="text" class="tail-datetime-field" />
+
+        <script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function(){
+            tail.DateTime(".tail-datetime-field", {
+    animate: true,                  // [0.4.0]          Boolean
+    classNames: false,              // [0.3.0]          Boolean, String, Array, null
+    closeButton: true,              // [0.4.5]          Boolean
+    dateFormat: "YYYY-mm-dd",       // [0.1.0]          String (PHP similar Date)
+    dateStart: moment().format('L'),               // [0.4.0]          String, Date, Integer, False
+    dateRanges: [],                 // [0.3.0]          Array
+    dateBlacklist: true,            // [0.4.0]          Boolean
+    dateEnd: false,                 // [0.4.0]          String, Date, Integer, False
+    locale: "en",                   // [0.4.0]          String
+    position: "bottom",             // [0.1.0]          String
+    rtl: "auto",                    // [0.4.1]          String, Boolean
+    startOpen: true,               // [0.3.0]          Boolean
+    stayOpen: true,                // [0.3.0]          Boolean
+    time12h: false,                 // [0.4.13][NEW]    Boolean
+    timeFormat: "HH:ii:ss",         // [0.1.0]          String (PHP similar Date)
+    timeHours: true,                // [0.4.13][UPD]    Integer, Boolean, null
+    timeMinutes: true,              // [0.4.13][UPD]    Integer, Boolean, null
+    timeSeconds: 0,                 // [0.4.13][UPD]    Integer, Boolean, null
+    timeIncrement: true,            // [0.4.5]          Boolean
+    timeStepHours: 1,               // [0.4.3]          Integer
+    timeStepMinutes: 5,             // [0.4.3]          Integer
+    timeStepSeconds: 5,             // [0.4.3]          Integer
+    today: true,                    // [0.4.0]          Boolean
+    tooltips: [],                   // [0.4.0]          Array
+    viewDefault: "days",            // [0.4.0]          String
+    viewDecades: true,              // [0.4.0]          Boolean
+    viewYears: true,                // [0.4.0]          Boolean
+    viewMonths: true,               // [0.4.0]          Boolean
+    viewDays: true,                 // [0.4.0]          Boolean
+    weekStart: 0                    // [0.1.0]          String, Integer
+});
+            });
+        </script>
+    </body>
+</html>
