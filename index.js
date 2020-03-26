@@ -10,11 +10,16 @@ const https = require('https');
 const ExpressPeerServer = require('peer').ExpressPeerServer;
 const path = require('path');
 const app = express();
+const redis = require('redis');
+const redisStore = require('connect-redis')(session);
 var md5 = require('md5');
 var moment=require("moment");
 var MySql = require('sync-mysql');
 var R = require("r-script");
 var shell = require('shelljs');
+
+client  = redis.createClient(6380, 'enbiocrypt.redis.cache.windows.net', 
+        {auth_pass: 'pQANwbSPqEA0rHqOpDznzOhJeb9sqyzWbZLWo6W5oZc=', tls: {servername: 'enbiocrypt.redis.cache.windows.net'}});
 
 const sslop = {
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
@@ -43,6 +48,13 @@ var server = http.createServer(app).listen(port, () => {
 
 var peer = ExpressPeerServer(server, options);
 
+app.use(session({
+    secret: 'ssshhhhhhhh',
+    // create new redis store.
+    store: new redisStore({client: client, disableTTL: true}),
+    saveUninitialized: false,
+    resave: false
+}));
 app.use('/api', peer);
 
 
@@ -56,13 +68,51 @@ app.use('/api', peer);
 });
 //port = process.env.PORT || 3000;
 */
-app.get('/home',(req,res) => {
-	res.render('home',{port:port});
+
+app.post('/main_admin_login', (req,res) => {
+  if(req.session.mainadmin){
+	res.render('admin');}
+  else{
+  userid = req.body.userid
+  password = req.body.password
+  var mysql = require('mysql');
+  var con= mysql.createConnection({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "newfeedbackdb", port: 3306});
+    con.connect(function(err) {
+    if (err) throw err;
+    con.query(`select userid FROM mainadmin WHERE userid="${userid}" AND password="${password}"`, function (err, result, fields) {
+      if (err) throw err;
+    console.log(result,result.length)
+    if(result.length!=0)
+    {
+      req.session.mainadmin=result[0].userid;
+      res.end("correct");
+    }
+    else{
+      res.end("Wrong Credentials!! Please Re-Enter");
+    }
+    });
+    con.end();
+    });
+  }
+});
+
+app.get('/login',(req,res) => {
+	if(req.session.mainadmin){
+		res.render('admin');
+	}
+	else{
+		res.render('login');
+	}
 	//res.sendFile(__dirname+'/Public/index.html');
 });
 
 app.get('/admin_portal',(req,res) => {
-	res.render('admin');
+	if(req.session.mainadmin){
+		res.render('admin');
+	}
+	else{
+		res.render('login');
+	}
 	//res.sendFile(__dirname+'/Public/index.html');
 });
 

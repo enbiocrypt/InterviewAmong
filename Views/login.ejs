@@ -2,10 +2,10 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script src="../node_modules/jquery/dist/jquery.min.js"></script>
-	<script src="../node_modules/popper.js/dist/umd/popper.min.js"></script>
-	<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-	<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+	<script src="jquery/dist/jquery.min.js"></script>
+	<script src="popper.js/dist/umd/popper.min.js"></script>
+	<script src="bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
 </head>
 <body style="display: grid;place-content: center;background: linear-gradient(to bottom right, #33ccff 0%, #ff99cc 100%);">
 <h2 style="text-align: center;">Admin Portal</h2>
@@ -31,7 +31,7 @@ xhr.open("POST", "main_admin_login", false);
 xhr.setRequestHeader('Content-Type', 'application/json');
 xhr.onreadystatechange = function() {
       if(this.responseText=="correct")
-		window.location='/main_admin_panel';
+		window.location='/admin_portal';
 	  else{
 		document.getElementById('exampleDropdownFormEmail1').value="";
 		document.getElementById('exampleDropdownFormPassword1').value="";
