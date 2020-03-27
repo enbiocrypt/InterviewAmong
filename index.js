@@ -1,6 +1,7 @@
 const express = require('express'),
      http = require('http');
 const fs = require('fs');
+var fetch = require('isomorphic-fetch');
 const nodemailer = require('nodemailer');
 const session = require('express-session');
 const {c, cpp, node, python, java} = require('compile-run');
@@ -17,9 +18,14 @@ var moment=require("moment");
 var MySql = require('sync-mysql');
 var R = require("r-script");
 var shell = require('shelljs');
+var Dropbox = require('dropbox').Dropbox;
 
-client  = redis.createClient(6380, 'enbiocrypt.redis.cache.windows.net', 
-        {auth_pass: 'pQANwbSPqEA0rHqOpDznzOhJeb9sqyzWbZLWo6W5oZc=', tls: {servername: 'enbiocrypt.redis.cache.windows.net'}});
+/**Primary Server**/
+/*client  = redis.createClient(6380, 'enbiocrypt.redis.cache.windows.net', 
+        {auth_pass: 'pQANwbSPqEA0rHqOpDznzOhJeb9sqyzWbZLWo6W5oZc=', tls: {servername: 'enbiocrypt.redis.cache.windows.net'}});*/
+/**Secondary Server**/
+client  = redis.createClient(6380, 'ebc.redis.cache.windows.net', 
+        {auth_pass: 'vsqj77ntGNLSaMnRcPqR8nfX71VMb33En36QIwajpM8=', tls: {servername: 'ebc.redis.cache.windows.net'}});
 
 const sslop = {
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
@@ -31,7 +37,7 @@ var options = {
 	ssl: sslop
 };
 
-
+var dbx = new Dropbox({ accessToken: 'bmj33lNaLoAAAAAAAAAAzPIn88dJEcC5CF3YSfu_sHf6DxT6ACbzTAJqVqZHl4n_', fetch: fetch});
 var port = process.env.PORT || 3000;
 app.set('view engine','ejs');
 app.use(bodyParser.json());      
@@ -76,8 +82,11 @@ app.post('/main_admin_login', (req,res) => {
   userid = req.body.userid
   password = req.body.password
   var mysql = require('mysql');
-  var con= mysql.createConnection({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "newfeedbackdb", port: 3306});
-    con.connect(function(err) {
+  /**Server**/
+  //var con= mysql.createConnection({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "newfeedbackdb", port: 3306});
+  /**localhost**/
+  var con= mysql.createConnection({host: "localhost", user: "root", password: "", database: "newfeedbackdb"});
+  con.connect(function(err) {
     if (err) throw err;
     con.query(`select userid FROM mainadmin WHERE userid="${userid}" AND password="${password}"`, function (err, result, fields) {
       if (err) throw err;
@@ -117,239 +126,278 @@ app.get('/admin_portal',(req,res) => {
 });
 
 app.get('/:pop',(req,res) => {
-	var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+	/**Server**/
+	//var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+	/**Localhost**/
+	var connection = new MySql({host: "localhost", user: "root", password: "", database: "ibdb"});
 	quer = 'select * from interdemo where sno="'+req.params.pop+'"';
 	var result = connection.query(quer);
 	console.log(result);
 	if(!result.length)
 		res.status(404).end("Session Expired (or) Wrong Link, Please Contact Admin or Recheck the link.");
 		//res.write("Session Expired (or) Wrong Link, Please Contact Admin or Recheck the link.");
-	else
-		res.render('home',{sender:result[0].sender,reciever:result[0].reciever,type:result[0].ptype});
+	else{
+			if(req.session.idm && req.session.ptype){
+				res.render('home',{sender:result[0].sender,reciever:result[0].reciever,type:result[0].ptype});
+			}
+			else{
+				if(result[0].ptype==1)
+					req.session.ptype="Interviewer";
+				else
+					req.session.ptype="Candidate";
+				req.session.idm=result[0].session_id;
+				res.render('home',{sender:result[0].sender,reciever:result[0].reciever,type:result[0].ptype});
+			}
+	}
 	//const index = path.join(__dirname, 'Public', 'home.html');
 	//res.sendFile(index);
 });
 
 app.post('/send',(req,res) => {
-	var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
-	var itemp=md5(md5(req.body.CEmail1)+md5(moment().format('LTS')));
-	var ctemp=md5(md5(req.body.IEmail1)+md5(moment().format('LTS')));
-	var sender=md5(md5(req.body.IEmail1)+md5(req.body.CEmail1)+md5(moment().format('LTS')));
-	var reciever=md5(md5(req.body.CEmail1)+md5(req.body.IEmail1)+md5(moment().format('LTS')));
-	console.log(`insert into interdemo values('${itemp}','${sender}','${reciever}')`);
-	quer = `insert into interdemo values('${itemp}','${sender}','${reciever}',0)`;
-	quer1 = `insert into interdemo values('${ctemp}','${reciever}','${sender}',1)`;
-	var result = connection.query(quer);
-	var result1 = connection.query(quer1);
-	console.log(req.body.CTag1);
-	var vtag=req.body.CTag1;
-	var ttag=vtag.join(",");
-	console.log(result,result1);
-	let mailTransporter = nodemailer.createTransport({ 
-    service: 'gmail', 
-    auth: { user: 'enbiocrypt@gmail.com', 
-			pass: 'rahouigakxkhvuwd' }
-	});
-	let CmailDetails = { 
-		from: 'enbiocrypt@gmail.com', 
-		to: `${req.body.CEmail1}`, 
-		subject: 'Your Interview Has been Scheduled', 
-		html: `Your Interview is on <b> ${req.body.Date} </b> at <b> ${req.body.Time}</b> <br> Link: http://enbiocrypts.nl/${itemp}`
-	};
-	let ImailDetails = { 
-		from: 'enbiocrypt@gmail.com', 
-		to: `${req.body.IEmail1}`, 
-		subject: 'An Interview Has been Scheduled', 
-		html: `An Interview is scheduled on <b>${req.body.Date}</b> at <b>${req.body.Time}</b><br>Candidate with Skill Set: <b>${ttag}</b><br>Link: http://enbiocrypts.nl/${ctemp}`
-	};
-	mailTransporter.sendMail(ImailDetails, function(err, data) { 
-		if(err) { 
-			console.log("Check Interviewer's mail"); 
-			return res.end("Check Interviewer's mail"); 
-		} else { 
-			console.log('Email sent successfully'); 
-		} 
-	});
-	mailTransporter.sendMail(CmailDetails, function(err, data) { 
-		if(err) { 
-			console.log("Check Candidate's mail"); 
-			return res.end("Check Candidate's mail");
-		} else { 
-			console.log('Email sent successfully'); 
-		} 
-	}); 
-	return res.end("Updated");
+	if(req.session.mainadmin){
+		/**Server**/
+		//var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+		/**localhost**/
+		var connection = new MySql({host: "localhost", user: "root", password: "", database: "ibdb"});
+		var itemp=md5(md5(req.body.CEmail1)+md5(moment().format('LTS')));
+		var ctemp=md5(md5(req.body.IEmail1)+md5(moment().format('LTS')));
+		var sender=md5(md5(req.body.IEmail1)+md5(req.body.CEmail1)+md5(moment().format('LTS')));
+		var reciever=md5(md5(req.body.CEmail1)+md5(req.body.IEmail1)+md5(moment().format('LTS')));
+		var sesid=md5(sender+reciever);
+		console.log(`insert into interdemo values('${itemp}','${sender}','${reciever}')`);
+		quer = `insert into interdemo values('${itemp}','${sender}','${reciever}',0,'${sesid}')`;
+		quer1 = `insert into interdemo values('${ctemp}','${reciever}','${sender}',1,'${sesid}')`;
+		var result = connection.query(quer);
+		var result1 = connection.query(quer1);
+		console.log(req.body.CTag1);
+		var vtag=req.body.CTag1;
+		var ttag=vtag.join(",");
+		console.log(result,result1);
+		let mailTransporter = nodemailer.createTransport({ 
+			service: 'gmail', 
+			auth: { user: 'enbiocrypt@gmail.com', 
+					pass: 'rahouigakxkhvuwd' }
+		});
+		let CmailDetails = { 
+			from: 'enbiocrypt@gmail.com', 
+			to: `${req.body.CEmail1}`, 
+			subject: 'Your Interview Has been Scheduled', 
+			html: `Your Interview is on <b> ${req.body.Date} </b> at <b> ${req.body.Time}</b> <br> Link: http://enbiocrypts.nl/${itemp}`
+		};
+		let ImailDetails = { 
+			from: 'enbiocrypt@gmail.com', 
+			to: `${req.body.IEmail1}`, 
+			subject: 'An Interview Has been Scheduled', 
+			html: `An Interview is scheduled on <b>${req.body.Date}</b> at <b>${req.body.Time}</b><br>Candidate with Skill Set: <b>${ttag}</b><br>Link: http://enbiocrypts.nl/${ctemp}`
+		};
+		mailTransporter.sendMail(ImailDetails, function(err, data) { 
+			if(err) { 
+				console.log("Check Interviewer's mail"); 
+				return res.end("Check Interviewer's mail"); 
+			} else { 
+				console.log('Email sent successfully'); 
+			} 
+		});
+		mailTransporter.sendMail(CmailDetails, function(err, data) { 
+			if(err) { 
+				console.log("Check Candidate's mail"); 
+				return res.end("Check Candidate's mail");
+			} else { 
+				console.log('Email sent successfully'); 
+			} 
+		}); 
+		return res.end("Updated");
+	}
+	else{
+		res.status(404).end("Unauthorized.. Next-Time your IP will be blacklisted...");
+	}
 	//res.sendFile(__dirname+'/Public/index.html');
 });
 
 
 app.post('/compile/:feedsId',(req,res) => {
-	if(req.params.feedsId=="python2"){
-		let resultPromise = python.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
-		resultPromise.then(result => {
-			console.log(result);
-			if(result.stderr){
-				var n=result.stderr.search("-")+1;
-				result.stderr=result.stderr.substring(n);
-			}
-			res.end(JSON.stringify({ result_output: result }));
-		})
-		.catch(err => {
-			res.end("Server Error");
-		});
-	}
-	else if(req.params.feedsId=="python3"){
-		let resultPromise = python.runSource(req.body.carrier, {executionPath: 'python3', stdin : req.body.carrier_ip});
-		resultPromise.then(result => {
-			if(result.stderr){
-				var n=result.stderr.search("-")+1;
-				result.stderr=result.stderr.substring(n);
-			}
-			res.end(JSON.stringify({ result_output: result }));
-		})
-		.catch(err => {
-			res.end("Server Error");
-		});
-	}
-	else if(req.params.feedsId=="cpp"){
-		let resultPromise = cpp.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
-		resultPromise.then(result => {
-			if(result.stderr){
-				var n=result.stderr.search("-")+1;
-				result.stderr=result.stderr.substring(n);
-			}
-			res.end(JSON.stringify({ result_output: result }));
-		})
-		.catch(err => {
-			res.end("Server Error");
-		});
-	}
-	else if(req.params.feedsId=="c"){
-		let resultPromise = c.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
-		resultPromise.then(result => {
-			if(result.stderr){
-				var n=result.stderr.search("-")+1;
-				result.stderr=result.stderr.substring(n);
-			}
-			res.end(JSON.stringify({ result_output: result }));
-		})
-		.catch(err => {
-			res.end("Server Error");
-		});
-	}
-	else if(req.params.feedsId=="java"){
-		let resultPromise = java.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
-		resultPromise.then(result => {
-			if(result.stderr){
-				var n=result.stderr.search("-")+1;
-				result.stderr=result.stderr.substring(n);
-			}
-			res.end(JSON.stringify({ result_output: result }));
-		})
-		.catch(err => {
-			res.end("Server Error");
-		});
-	}
-	else if(req.params.feedsId=="javascript"){
-		let resultPromise = node.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
-		resultPromise.then(result => {
-			if(result.stderr){
-				var n=result.stderr.search("-")+1;
-				result.stderr=result.stderr.substring(n);
-			}
-			console.log(result);
-			res.end(JSON.stringify({ result_output: result }));
-		})
-		.catch(err => {
-			res.end("Server Error");
-		});
-	}
-	else if(req.params.feedsId=="mysql"){
-		var mysql = require('mysql');
-		var connection = mysql.createConnection({host: "localhost", user: "root", password: "", database: "ibdb", port: 3306});
-		var quer = req.body.carrier;
-		var ls={};
-		var ps=[];
-		var temp=false
-		connection.connect(function(err) {
-			if (err)
-				res.end(JSON.stringify({ result_output: err }));
-			connection.query(quer, function (err, result, fields) {
+	if(req.session.idm && req.session.ptype){
+		var result;
+		var error;
+		dbx.filesUpload({path: `/IB/${req.session.ptype}_${moment().format('LTS')}_${req.params.feedsId}`,
+						 contents: req.body.carrier,
+						 autorename:true
+						}).then(function (response) {
+							result=response;
+							//console.log(response);
+						}).catch(function (err) {
+							error=err;
+							//console.log(err);
+						});
+		if(req.params.feedsId=="python2"){
+			let resultPromise = python.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
+			resultPromise.then(result => {
+				console.log(result);
+				if(result.stderr){
+					var n=result.stderr.search("-")+1;
+					result.stderr=result.stderr.substring(n);
+				}
+				res.end(JSON.stringify({ result_output: result }));
+			})
+			.catch(err => {
+				res.end("Server Error");
+			});
+		}
+		else if(req.params.feedsId=="python3"){
+			let resultPromise = python.runSource(req.body.carrier, {executionPath: 'python3', stdin : req.body.carrier_ip});
+			resultPromise.then(result => {
+				if(result.stderr){
+					var n=result.stderr.search("-")+1;
+					result.stderr=result.stderr.substring(n);
+				}
+				res.end(JSON.stringify({ result_output: result }));
+			})
+			.catch(err => {
+				res.end("Server Error");
+			});
+		}
+		else if(req.params.feedsId=="cpp"){
+			let resultPromise = cpp.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
+			resultPromise.then(result => {
+				if(result.stderr){
+					var n=result.stderr.search("-")+1;
+					result.stderr=result.stderr.substring(n);
+				}
+				res.end(JSON.stringify({ result_output: result }));
+			})
+			.catch(err => {
+				res.end("Server Error");
+			});
+		}
+		else if(req.params.feedsId=="c"){
+			let resultPromise = c.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
+			resultPromise.then(result => {
+				if(result.stderr){
+					var n=result.stderr.search("-")+1;
+					result.stderr=result.stderr.substring(n);
+				}
+				res.end(JSON.stringify({ result_output: result }));
+			})
+			.catch(err => {
+				res.end("Server Error");
+			});
+		}
+		else if(req.params.feedsId=="java"){
+			let resultPromise = java.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
+			resultPromise.then(result => {
+				if(result.stderr){
+					var n=result.stderr.search("-")+1;
+					result.stderr=result.stderr.substring(n);
+				}
+				res.end(JSON.stringify({ result_output: result }));
+			})
+			.catch(err => {
+				res.end("Server Error");
+			});
+		}
+		else if(req.params.feedsId=="javascript"){
+			let resultPromise = node.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
+			resultPromise.then(result => {
+				if(result.stderr){
+					var n=result.stderr.search("-")+1;
+					result.stderr=result.stderr.substring(n);
+				}
+				console.log(result);
+				res.end(JSON.stringify({ result_output: result }));
+			})
+			.catch(err => {
+				res.end("Server Error");
+			});
+		}
+		else if(req.params.feedsId=="mysql"){
+			var mysql = require('mysql');
+			var connection = mysql.createConnection({host: "localhost", user: "root", password: "", database: "ibdb", port: 3306});
+			var quer = req.body.carrier;
+			var ls={};
+			var ps=[];
+			var temp=false
+			connection.connect(function(err) {
 				if (err)
 					res.end(JSON.stringify({ result_output: err }));
-				for(var i=0;i<result.length;i++){
-					var tmp=[]
-					var tmp1=[]
-					for(var j in result[i]){
-						if(!temp)
-							tmp.push(j)
-						
-						tmp1.push(result[i][j])
-						/*if(j in ls)
-							ls[j].push(result[i][j])
-						else{
-							ls[j]=[]
-							ls[j].push(result[i][j])
-						}*/
+				connection.query(quer, function (err, result, fields) {
+					if (err)
+						res.end(JSON.stringify({ result_output: err }));
+					for(var i=0;i<result.length;i++){
+						var tmp=[]
+						var tmp1=[]
+						for(var j in result[i]){
+							if(!temp)
+								tmp.push(j)
+							
+							tmp1.push(result[i][j])
+							/*if(j in ls)
+								ls[j].push(result[i][j])
+							else{
+								ls[j]=[]
+								ls[j].push(result[i][j])
+							}*/
+						}
+						if(!temp){
+							ps.push(tmp.join("\t"))
+						}
+						ps.push(tmp1.join("\t"))
+						temp = true
 					}
-					if(!temp){
-						ps.push(tmp.join("\t"))
-					}
-					ps.push(tmp1.join("\t"))
-					temp = true
-				}
-				if(result.message)
-					ps.push(result.message)
-				console.log(ps.join("\n"))
-				res.end(JSON.stringify({ result_output: {"stdout":ps.join("\n")} }));
+					if(result.message)
+						ps.push(result.message)
+					console.log(ps.join("\n"))
+					res.end(JSON.stringify({ result_output: {"stdout":ps.join("\n")} }));
+				});
+				connection.end();
 			});
-			connection.end();
-		});
-	}
-	else if(req.params.feedsId=="R"){
-		console.log(`echo "${req.body.carrier}" | tee /home/logfile.R`)
-		var tr = shell.exec(`echo "${req.body.carrier}" | tee /home/logfile.R`)
-		if(tr.code==0){
-			var tr1 = shell.exec(`Rscript /home/logfile.R`)
-			if(tr1.code==0)
-				res.end(JSON.stringify({ result_output: {stdout:tr1.stdout} }));
-			else
-				res.end(JSON.stringify({ result_output: {stdout:tr1.stderr} }));
 		}
-		else
-			res.end(JSON.stringify({ result_output: {stdout:tr.stderr} }));
-			
-	}
-	else if(req.params.feedsId=="Ruby"){
-		console.log(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
-		var tr = shell.exec(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
-		if(tr.code==0){
-			var tr1 = shell.exec(`ruby /home/logfile.rb`)
-			if(tr1.code==0)
-				res.end(JSON.stringify({ result_output: {stdout:tr1.stdout} }));
+		else if(req.params.feedsId=="R"){
+			console.log(`echo "${req.body.carrier}" | tee /home/logfile.R`)
+			var tr = shell.exec(`echo "${req.body.carrier}" | tee /home/logfile.R`)
+			if(tr.code==0){
+				var tr1 = shell.exec(`Rscript /home/logfile.R`)
+				if(tr1.code==0)
+					res.end(JSON.stringify({ result_output: {stdout:tr1.stdout} }));
+				else
+					res.end(JSON.stringify({ result_output: {stdout:tr1.stderr} }));
+			}
 			else
-				res.end(JSON.stringify({ result_output: {stdout:tr1.stderr} }));
+				res.end(JSON.stringify({ result_output: {stdout:tr.stderr} }));
+				
 		}
-		else
-			res.end(JSON.stringify({ result_output: {stdout:tr.stderr} }));
-			
-	}
-	else if(req.params.feedsId=="C#"){
-		console.log(`echo "${req.body.carrier}" | tee /home/logfile.c`)
-		var tr = shell.exec(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
-		if(tr.code==0){
-			var tr1 = shell.exec(`csc /home/logfile.cs`)
-			if(tr1.code==0)
-				res.end(JSON.stringify({ result_output: {stdout:tr1.stdout} }));
+		else if(req.params.feedsId=="Ruby"){
+			console.log(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
+			var tr = shell.exec(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
+			if(tr.code==0){
+				var tr1 = shell.exec(`ruby /home/logfile.rb`)
+				if(tr1.code==0)
+					res.end(JSON.stringify({ result_output: {stdout:tr1.stdout} }));
+				else
+					res.end(JSON.stringify({ result_output: {stdout:tr1.stderr} }));
+			}
 			else
-				res.end(JSON.stringify({ result_output: {stdout:tr1.stderr} }));
+				res.end(JSON.stringify({ result_output: {stdout:tr.stderr} }));
+				
 		}
-		else
-			res.end(JSON.stringify({ result_output: {stdout:tr.stderr} }));
-			
-	}
-	else{
-		res.end("Wrong Selection");
+		else if(req.params.feedsId=="C#"){
+			console.log(`echo "${req.body.carrier}" | tee /home/logfile.c`)
+			var tr = shell.exec(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
+			if(tr.code==0){
+				var tr1 = shell.exec(`csc /home/logfile.cs`)
+				if(tr1.code==0)
+					res.end(JSON.stringify({ result_output: {stdout:tr1.stdout} }));
+				else
+					res.end(JSON.stringify({ result_output: {stdout:tr1.stderr} }));
+			}
+			else
+				res.end(JSON.stringify({ result_output: {stdout:tr.stderr} }));
+				
+		}
+		else{
+			res.end("Wrong Selection");
+		}
+	}else{
+		res.status(404).end("Unauthorized.. Next-Time your IP will be blacklisted...");
 	}
 });
 
