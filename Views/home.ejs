@@ -817,7 +817,7 @@
 		var interviewer;
 		var Range = ace.require('ace/range').Range;
 		<% if (type) { %>
-		var merger = new VideoStreamMerger();
+		var merger;
 		let mediaRecorder;
 		var recordedChunks = [];
 		<% } %>
@@ -858,6 +858,7 @@
 				window.peer_stream = stream;
 				onReceiveStream(stream, 'peer-camera');
 			<% if (type) { %>
+				merger = new VideoStreamMerger();
 				merger.addStream(window.peer_stream, {
 					x: 0, // position of the topleft corner
 					y: 0,
