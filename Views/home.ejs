@@ -21,6 +21,9 @@
 	<script src="autosize/dist/autosize.min.js"></script>
 	<script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
 	<script src="ace/ext-language_tools.js"></script>
+	<% if (type) { %>
+		<script src="video-stream-merger/dist/video-stream-merger.js"></script>
+	<% } %>	
 </head>
 
 <style>
@@ -224,7 +227,7 @@
 .panel-left {
   flex: 0 0 auto;
   min-width:40vw;
-  max-width:70vw;
+  max-width:65vw;
   width:50vw;
   /* only manually resize */
 }
@@ -379,6 +382,9 @@
   overflow: hidden;
   background-color: #f1f1f1;
 }
+.navbar-brand{
+  margin-right: 0rem;
+}
 </style>
 
 <body>
@@ -425,15 +431,11 @@
 		<h4 style="margin-top: 0px;margin-bottom: 0px;">Output:</h4>
 	</div>
 </div> -->
-	<div style="display:flex">
-		<div>
-			<nav class="navbar fixed-left navbar-light bg-light">
-				<a class="navbar-brand" href="#"></a>
-			</nav>
-		</div>
-		<div class="panel-left" style="height: 100vh;background: #535353;padding-left:5px;padding-right:0px;">
-				<div style="display:inline-flex;padding:5;width:100%">
-					<div class="col-lg-6">
+	<div style="display: inline-flex;width: 100%;background: #535353;">
+  <div class="col-md-6">
+	<div style="display:inline-flex;padding:5;width:100%;">
+					<div class="col-sm-1"></div>
+					<div class="col-lg-4">
 						<select id="selection" class="custom-select btn btn-primary dropdown-toggle" onchange="seteditor()" style="border-radius: 15px;width:auto;border:none;color: aliceblue;">
 							<option value="python3">Python 3.5.3</option>
 							<option value="python2">Python 2.7.13</option>
@@ -447,7 +449,6 @@
 							<option value="C#">C#</option>
 						</select>
 					</div>
-					<div class="col-sm-3"></div>
 					<div class="col-sm-1" style="align-self: center;">
 						<!--<button type="button" class="collapsible">Open Collapsible</button>
 						<div class="content" style="position:absolute;z-index:2000">
@@ -468,23 +469,38 @@
 						<button id="exec" type="button" class="btn btn-primary" onclick="submit()" style="border-radius: 15px;"><i class="fa fa-chevron-right"></i> Run</button>
 					</div>
 				</div>
+		</div>
+		<% if (type) { %>
+			<div style="display:inline-flex;padding:5;width:100%;justify-content: flex-end;">
+				
+					<div style="padding-right:10">
+						<button id="exec" type="button" class="btn btn-info" onclick="hide_logs()" style="border-radius: 15px;">Logs</button>
+					</div>
+					<div>
+						<button id="exec" type="button" class="btn btn-danger" onclick="download();" style="border-radius: 15px;">End Test</button>
+					</div>
+				
+			</div>
+		<% } %>
+	</div>
+	<div style="display:flex;background:dimgrey;">
+		<div style="background: dimgrey;">
+			<nav class="navbar fixed-left navbar-light" style=""></nav>
+			<nav class="navbar fixed-left navbar-light" style="background: #535353;padding:10;">
+				<a class="navbar-brand" href="#"><i class="fa fa-code fa-lg"></i></a>
+			</nav>
+		</div>
+		<div class="panel-left" style="height: 100vh;background: #535353;padding-left:5px;padding-right:0px;">
 			<div id="editor" class="panel-top"></div>
 			<div class="splitter-horizontal"></div>
 			<textarea readonly id="output" placeholder="Output Here.." class="panel-bottom"></textarea>
 		</div>
 		<div class="splitter"></div>
 		<div class="panel-right" style="background:#272822;">
-			<div style="display:inline-flex;padding:5;width:100%;justify-content: flex-end;">
-				<% if (type) { %>
-					<div style="padding-right:10">
-						<button id="exec" type="button" class="btn btn-info" onclick="hide_logs()" style="border-radius: 15px;">Logs</button>
-					</div>
-					<div>
-						<button id="exec" type="button" class="btn btn-danger" onclick="submit()" style="border-radius: 15px;">End Test</button>
-					</div>
-				<% } %>
-			</div>
 			<div class="row" style="height:35vh;margin-right:0px;margin-left:0px;justify-content:flex-end;padding:10">
+						<div style="display: flex;align-items: flex-end;">
+							<i class="fa fa-expand fa-lg" style="color: black;background: white;padding: 7px;cursor: pointer;"></i>
+						</div>
 						<div style="position:relative;">
 							<!-- 
 								Display video of the current user
@@ -503,9 +519,7 @@
 							</div>
 						</div>
 			</div>
-			<div class="row" style="height:10vh;margin-right:0px;margin-left:0px;justify-content:flex-end;">
-			</div>
-			<div class="row" style="height:45vh;margin-right:0px;margin-left:0px;">
+			<div class="row" style="height:65vh;margin-right:0px;margin-left:0px;">
 				<div class="col-sm-4">
 					<div id="mydiv1" class="mydiv1">
 						<div style="display:flex">
@@ -524,7 +538,7 @@
 						<% } %>
 					</div>
 					<% if (type) { %>
-						<div id="mydiv3" class="mydiv3" style="top: 34px; left: 28px;">
+						<div id="mydiv3" class="mydiv3" style="top: 34px; left: 28px;visibility:hidden;">
 							<div style="display:flex">
 								<div id="mydiv3header" class="col-sm-10">Logger</div>
 									<div id="mydiv4header" class="col-sm-2">
@@ -802,6 +816,11 @@
 		var call;
 		var interviewer;
 		var Range = ace.require('ace/range').Range;
+		<% if (type) { %>
+		var merger = new VideoStreamMerger();
+		let mediaRecorder;
+		var recordedChunks = [];
+		<% } %>
 		l = "<%- sender %>";
 		p = "<%- reciever %>";
 		if(<%- type %>){
@@ -838,6 +857,50 @@
 			call.on('stream', function (stream) {
 				window.peer_stream = stream;
 				onReceiveStream(stream, 'peer-camera');
+			<% if (type) { %>
+				merger.addStream(window.peer_stream, {
+					x: 0, // position of the topleft corner
+					y: 0,
+					width: merger.width,
+					height: merger.height,
+					mute: false // we don't want sound from the screen (if there is any)
+				});
+
+				// Add the webcam stream. Position it on the bottom left and resize it to 100x100.
+				merger.addStream(window.localStream, {
+					x: 0,
+					y: merger.height - 100,
+					width: 100,
+					height: 100,
+					mute: true
+				});
+
+				// Start the merging. Calling this makes the result available to us
+				merger.start();
+				let options = {mimeType: 'video/webm;codecs=vp9'};
+				if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+					console.error(`${options.mimeType} is not Supported`);
+					options = {mimeType: 'video/webm;codecs=vp8'};
+				if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+					console.error(`${options.mimeType} is not Supported`);
+					options = {mimeType: 'video/webm'};
+				if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+					console.error(`${options.mimeType} is not Supported`);
+					options = {mimeType: ''};
+						}
+					}
+				}
+				
+				try {
+					mediaRecorder = new MediaRecorder(merger.result, options);
+				} catch (e) {
+					console.error('Exception while creating MediaRecorder:', e);
+					return;
+				}
+				mediaRecorder.ondataavailable = handleDataAvailable;
+				mediaRecorder.start();
+			<% } %>
+				//onReceiveStream(merger.result, 'merge-camera');
 			});
             //$('#rid').val(conn.peer);
             //$('#rid').prop('disabled', true);
@@ -1063,8 +1126,32 @@
 			var tes1=document.getElementById("resize_op").value;
 			conn.send({action:"recieve_prob",message:tes1});
 		}
-	<% } %>
 	
+	function handleDataAvailable(event) {
+		//console.log('handleDataAvailable', event);
+		if (event.data && event.data.size > 0) {
+			recordedChunks.push(event.data);
+		}
+	}
+	
+	function download() {
+		mediaRecorder.stop();
+		setTimeout(function(){
+			var blob = new Blob(recordedChunks, {
+				type: 'video/webm'
+			});
+			var url = URL.createObjectURL(blob);
+			var a = document.createElement('a');
+			document.body.appendChild(a);
+			a.style = 'display: none';
+			a.href = url;
+			a.download = 'test.webm';
+			a.click();
+			window.URL.revokeObjectURL(url);}
+		,2000);
+	}
+	
+	<% } %>
     </script>
 <script>
 //Make the DIV element draggagle:
@@ -1193,7 +1280,6 @@ Notify = function(text, callback, close_callback, style) {
 }
 </script>
 <script>
-
     peer.on('call', function (call) {
             // Answer the call with your own video/audio stream
             call.answer(window.localStream);
@@ -1233,6 +1319,7 @@ Notify = function(text, callback, close_callback, style) {
      * @param {*} stream
      * @param {*} element_id
      */
+	
     function onReceiveStream(stream, element_id) {
         // Retrieve the video element according to the desired
         var video = document.getElementById(element_id);

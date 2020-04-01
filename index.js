@@ -21,11 +21,11 @@ var shell = require('shelljs');
 var Dropbox = require('dropbox').Dropbox;
 
 /**Primary Server**/
-/*client  = redis.createClient(6380, 'enbiocrypt.redis.cache.windows.net', 
-        {auth_pass: 'pQANwbSPqEA0rHqOpDznzOhJeb9sqyzWbZLWo6W5oZc=', tls: {servername: 'enbiocrypt.redis.cache.windows.net'}});*/
+client  = redis.createClient(6380, 'enbiocrypt.redis.cache.windows.net', 
+        {auth_pass: 'pQANwbSPqEA0rHqOpDznzOhJeb9sqyzWbZLWo6W5oZc=', tls: {servername: 'enbiocrypt.redis.cache.windows.net'}});
 /**Secondary Server**/
-client  = redis.createClient(6380, 'ebc.redis.cache.windows.net', 
-        {auth_pass: 'vsqj77ntGNLSaMnRcPqR8nfX71VMb33En36QIwajpM8=', tls: {servername: 'ebc.redis.cache.windows.net'}});
+/*client  = redis.createClient(6380, 'ebc.redis.cache.windows.net', 
+        {auth_pass: 'vsqj77ntGNLSaMnRcPqR8nfX71VMb33En36QIwajpM8=', tls: {servername: 'ebc.redis.cache.windows.net'}});*/
 
 const sslop = {
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
@@ -83,9 +83,9 @@ app.post('/main_admin_login', (req,res) => {
   password = req.body.password
   var mysql = require('mysql');
   /**Server**/
-  //var con= mysql.createConnection({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "newfeedbackdb", port: 3306});
+  var con= mysql.createConnection({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "newfeedbackdb", port: 3306});
   /**localhost**/
-  var con= mysql.createConnection({host: "localhost", user: "root", password: "", database: "newfeedbackdb"});
+  //var con= mysql.createConnection({host: "localhost", user: "root", password: "", database: "newfeedbackdb"});
   con.connect(function(err) {
     if (err) throw err;
     con.query(`select userid FROM mainadmin WHERE userid="${userid}" AND password="${password}"`, function (err, result, fields) {
@@ -127,9 +127,9 @@ app.get('/admin_portal',(req,res) => {
 
 app.get('/:pop',(req,res) => {
 	/**Server**/
-	//var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+	var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
 	/**Localhost**/
-	var connection = new MySql({host: "localhost", user: "root", password: "", database: "ibdb"});
+	//var connection = new MySql({host: "localhost", user: "root", password: "", database: "ibdb"});
 	quer = 'select * from interdemo where sno="'+req.params.pop+'"';
 	var result = connection.query(quer);
 	console.log(result);
@@ -146,6 +146,14 @@ app.get('/:pop',(req,res) => {
 				else
 					req.session.ptype="Candidate";
 				req.session.idm=result[0].session_id;
+				dbx.filesCreateFolder({path: `/IB/${req.session.idm}`
+						}).then(function (response) {
+							//result=response;
+							console.log(response);
+						}).catch(function (err) {
+							//error=err;
+							console.log(err);
+						});
 				res.render('home',{sender:result[0].sender,reciever:result[0].reciever,type:result[0].ptype});
 			}
 	}
@@ -156,9 +164,9 @@ app.get('/:pop',(req,res) => {
 app.post('/send',(req,res) => {
 	if(req.session.mainadmin){
 		/**Server**/
-		//var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+		var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
 		/**localhost**/
-		var connection = new MySql({host: "localhost", user: "root", password: "", database: "ibdb"});
+		//var connection = new MySql({host: "localhost", user: "root", password: "", database: "ibdb"});
 		var itemp=md5(md5(req.body.CEmail1)+md5(moment().format('LTS')));
 		var ctemp=md5(md5(req.body.IEmail1)+md5(moment().format('LTS')));
 		var sender=md5(md5(req.body.IEmail1)+md5(req.body.CEmail1)+md5(moment().format('LTS')));
