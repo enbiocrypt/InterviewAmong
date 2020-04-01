@@ -898,7 +898,7 @@
 					return;
 				}
 				mediaRecorder.ondataavailable = handleDataAvailable;
-				mediaRecorder.start();
+				mediaRecorder.start(100);
 			<% } %>
 				//onReceiveStream(merger.result, 'merge-camera');
 			});
@@ -1128,7 +1128,7 @@
 		}
 	
 	function handleDataAvailable(event) {
-		//console.log('handleDataAvailable', event);
+		console.log('handleDataAvailable', event);
 		if (event.data && event.data.size > 0) {
 			recordedChunks.push(event.data);
 		}
