@@ -19,6 +19,25 @@ var MySql = require('sync-mysql');
 var R = require("r-script");
 var shell = require('shelljs');
 var Dropbox = require('dropbox').Dropbox;
+var firebase = require('firebase');
+var multer  = require('multer');
+var storage = multer.memoryStorage();
+var upload = multer({ storage: storage });
+const sp = require('synchronized-promise')
+const puppeteer = require("puppeteer");
+
+
+var firebaseConfig = {
+    apiKey: "AIzaSyB_96JfyrAPKkBYQBYotMG-f3pd0t-smig",
+    authDomain: "elemental-axle-259821.firebaseapp.com",
+    databaseURL: "https://elemental-axle-259821.firebaseio.com",
+    projectId: "elemental-axle-259821",
+    storageBucket: "elemental-axle-259821.appspot.com",
+    messagingSenderId: "1061723107456",
+    appId: "1:1061723107456:web:214359a6c5a94d5d003665",
+    measurementId: "G-GDCWPYLFK0"
+  };
+firebase.initializeApp(firebaseConfig);
 
 /**Primary Server**/
 client  = redis.createClient(6380, 'enbiocrypt.redis.cache.windows.net', 
@@ -41,7 +60,8 @@ var dbx = new Dropbox({ accessToken: 'bmj33lNaLoAAAAAAAAAAzPIn88dJEcC5CF3YSfu_sH
 var port = process.env.PORT || 3000;
 app.set('view engine','ejs');
 app.use(bodyParser.json());      
-app.use(bodyParser.urlencoded({extended: true}));
+var upperBound = '1gb';
+app.use(bodyParser.urlencoded({extended: false, limit: upperBound}));
 app.use(express.static(__dirname + '/node_modules'));
 app.use(express.static(__dirname + '/Public'));
 app.use(express.static(__dirname + '/Views'));
@@ -161,6 +181,83 @@ app.get('/:pop',(req,res) => {
 	//res.sendFile(index);
 });
 
+app.get('/report/:pop',(req,res) => {
+	req.session.logger=req.params.pop;
+	var lis=[];
+	function fun1(item,index){
+		ext = item.path_display.split(".")[1]
+		if(ext == "txt")
+			lis.push(item.name);
+			//dbx.filesDownload({path:item.path_display}).then(function(response){lis.push([response.name,response.fileBinary]);}).catch(function(err){console.log(err);});
+	}
+	/**Server**/
+	//var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+	/**Localhost**/
+	//var connection = new MySql({host: "localhost", user: "root", password: "", database: "ibdb"});
+	var fun;
+	var ty;
+	firebase.database().ref(`sessionIB/${req.params.pop}`).on("value", function(snapshot) {
+		fun = snapshot.val();
+		console.log(fun.Logs);
+		
+		dbx.filesListFolder({path:`/IB/${req.params.pop}`}).then(function(response){
+			ty = response.entries;
+			ty.forEach(fun1);
+			res.render('reports',{snap:JSON.stringify(fun.Logs),endtime:fun.End_Time,starttime:fun.Start_Time,ssid:req.params.pop,vlink:fun.Video_Link,llink:fun.Logs_Link,compiled_files:JSON.stringify(lis),lchats:JSON.stringify(fun.Chats),lcompiled:JSON.stringify(fun.Compiled),problem:fun.Problem});	
+		}).catch(function(err){console.log(err);});
+		
+		}, function (error) {
+		res.status(404).end("Unauthorized Access, Please Contact Admin or Recheck the link.");
+	});
+	
+	//const index = path.join(__dirname, 'Public', 'home.html');
+	//res.sendFile(index);
+});
+
+app.get('/report1/:pop',(req,res) => {
+	req.session.logger=req.params.pop;
+	var lis=[];
+	function fun1(item,index){
+		ext = item.path_display.split(".")[1]
+		if(ext == "txt")
+			lis.push(item.name);
+			//dbx.filesDownload({path:item.path_display}).then(function(response){lis.push([response.name,response.fileBinary]);}).catch(function(err){console.log(err);});
+	}
+	/**Server**/
+	//var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+	/**Localhost**/
+	//var connection = new MySql({host: "localhost", user: "root", password: "", database: "ibdb"});
+	var fun;
+	var ty;
+	firebase.database().ref(`sessionIB/${req.params.pop}`).on("value", function(snapshot) {
+		fun = snapshot.val();
+		console.log(fun.Logs);
+		
+		dbx.filesListFolder({path:`/IB/${req.params.pop}`}).then(function(response){
+			ty = response.entries;
+			ty.forEach(fun1);
+			res.render('reports1',{snap:JSON.stringify(fun.Logs),endtime:fun.End_Time,starttime:fun.Start_Time,ssid:req.params.pop,vlink:fun.Video_Link,llink:fun.Logs_Link,compiled_files:JSON.stringify(lis),lchats:JSON.stringify(fun.Chats),lcompiled:JSON.stringify(fun.Compiled),problem:fun.Problem});	
+		}).catch(function(err){console.log(err);});
+		
+		}, function (error) {
+		res.status(404).end("Unauthorized Access, Please Contact Admin or Recheck the link.");
+	});
+	
+	//const index = path.join(__dirname, 'Public', 'home.html');
+	//res.sendFile(index);
+});
+
+app.post('/report_files',(req,res) => {
+	if(req.session.logger){
+		dbx.filesDownload({path:`/IB/${req.session.logger}/${req.body.com_file}`}).then(function(response){
+			res.end(JSON.stringify([response.name,response.fileBinary.toString()]));
+		}).catch(function(err){res.status(404).end("Unauthorized Access, Please Contact Admin or Recheck the link.");});
+	}else{
+		res.status(404).end("Unauthorized Access, Please Contact Admin or Recheck the link.");
+	}
+});
+
+
 app.post('/send',(req,res) => {
 	if(req.session.mainadmin){
 		/**Server**/
@@ -222,12 +319,182 @@ app.post('/send',(req,res) => {
 	//res.sendFile(__dirname+'/Public/index.html');
 });
 
+app.post('/export/pdf/:pop', (req, res) => {
+    (async () => {
+        const browser = await puppeteer.launch()
+        const page = await browser.newPage()
+        await page.goto(`http://localhost:3000/report1/${req.params.pop}`)
+        const buffer = await page.pdf({format: 'A4', printBackground : true})
+		let mailTransporter = nodemailer.createTransport({ 
+			service: 'gmail', 
+			auth: { user: 'enbiocrypt@gmail.com', 
+					pass: 'rahouigakxkhvuwd' }
+		});
+		let CmailDetails = { 
+			from: 'enbiocrypt@gmail.com', 
+			to: `${req.body.CEmail1}`,
+			//to: "dineshsurisetti@gmail.com",
+			subject: 'A Log Report has been shared..', 
+			//html: `Your Interview is on <b> ${req.body.Date} </b> at <b> ${req.body.Time}</b> <br> Link: http://enbiocrypts.nl/${itemp}`
+			attachments: {   // define custom content type for the attachment
+				filename: `${req.params.pop}.pdf`,
+				content: buffer,
+				contentType: 'application/pdf'
+			}
+		};
+		mailTransporter.sendMail(CmailDetails, function(err, data) { 
+			if(err) { 
+				console.log("Check Interviewer's mail"); 
+				res.end("Check Interviewer's mail"); 
+			} else { 
+				res.end('Email sent successfully'); 
+			} 
+		});
+        //res.type('application/pdf')
+        //res.send(buffer)
+        browser.close()
+    })()
+})
+
+
+app.post('/export/pdf_download/:pop', (req, res) => {
+    (async () => {
+        const browser = await puppeteer.launch()
+        const page = await browser.newPage()
+        await page.goto(`http://localhost:3000/report1/${req.params.pop}`)
+        const buffer = await page.pdf({format: 'A4', printBackground : true})
+        res.type('application/pdf')
+        res.send(buffer)
+        browser.close()
+    })()
+})
+
+app.post('/save_log',(req,res) => {
+	if(req.session.idm && req.session.ptype){
+		firebase.database().ref(`sessionIB/${req.session.idm}/Logs`).push({Type:req.session.ptype, Text:req.body.message, Time: req.body.time, Action: req.body.Atype});
+		res.end("Done Saving");
+	}
+	else{
+		res.status(404).end("Unauthorized.. Next-Time your IP will be blacklisted...");
+	}
+});
+
+app.post('/time_track',(req,res) => {
+	var time_op = moment().format();
+	if(req.session.idm && req.session.ptype=="Interviewer"){
+		if(req.session.start_timer)
+			res.end(time_op);
+		else{
+			req.session.start_timer=time_op;
+			firebase.database().ref(`sessionIB/${req.session.idm}/Start_Time`).set(req.session.start_timer);
+			res.end(time_op);
+		}
+	}
+	else{
+		res.status(404).end("Unauthorized.. Next-Time your IP will be blacklisted...");
+	}
+});
+
+app.post('/time_track_end',(req,res) => {
+	var time_op = moment().format();
+	if(req.session.idm && req.session.ptype=="Interviewer"){
+		if(req.session.end_timer)
+			res.end(time_op);
+		else{
+			req.session.end_timer=time_op;
+			firebase.database().ref(`sessionIB/${req.session.idm}/End_Time`).set(req.session.end_timer);
+			res.end(time_op);
+		}
+	}
+	else{
+		res.status(404).end("Unauthorized.. Next-Time your IP will be blacklisted...");
+	}
+});
+
+app.post('/save_video', upload.single('upl'),(req,res) => {
+	var temo;
+	if(req.session.idm && req.session.ptype=="Interviewer"){
+		/*if(req.session.video_sessionId){
+			dbx.filesUploadSessionAppendV2({contents:req.body.videoChunk, cursor:{session_id:req.session.video_sessionId, offset:req.session.counter}}).then(function(response){temo="Uploaded";console.log(response);}).catch(function(err){temo="Error";});
+			res.end(temo);
+		}
+		else{
+			req.session.counter=0;
+			dbx.filesUploadSessionStart({contents:req.body.videoChunk}).then(function(response){req.session.video_sessionId=response.session_id;console.log(response);}).catch(function(err){console.log(err);});
+			console.log(temo);
+			if(temo){
+				req.session.counter+=req.body.videoChunk.size;
+				req.session.video_sessionId=temo;
+				res.end("Uploaded");
+			}
+			else
+				res.end("Error");
+		}*/
+		var bars;
+		var dlink;
+		var dfolder;
+		dbx.sharingCreateSharedLink({
+			path: `/IB/${req.session.idm}`
+			}).then(function (response) {
+				firebase.database().ref(`sessionIB/${req.session.idm}/Logs_Link`).set(response.url);
+			}).catch(function (err) {
+				res.end("Error");
+		});
+		dbx.filesUpload({path: `/IB/${req.session.idm}/${req.session.idm}_${moment().format('LTS')}.webm`,
+						 contents: req.file.buffer,
+						 autorename:true
+						}).then(function (response) {
+							//res.end("Success");
+							dbx.sharingCreateSharedLink({
+								path: `${response.path_display}`
+							}).then(function (response) {
+								var hue = response.url
+								hue = hue.replace("www.dropbox.com","dl.dropboxusercontent.com")
+								firebase.database().ref(`sessionIB/${req.session.idm}/Video_Link`).set(hue);
+								res.end("Success");
+								}).catch(function (err) {
+									console.log(err);
+									res.end("Error");
+							});
+						}).catch(function (err) {
+							res.end("Error");
+							console.log(err);
+						});
+		//const syncDti = sp(dti)
+		//syncDti();
+	}
+	else{
+		res.status(404).end("Unauthorized.. Next-Time your IP will be blacklisted...");
+	}
+});
+
+
+app.post('/save_chat',(req,res) => {
+	if(req.session.idm && req.session.ptype){
+		firebase.database().ref(`sessionIB/${req.session.idm}/Chats`).push({Type:req.session.ptype, Text:req.body.message, Time:req.body.time});
+		res.end("Done Saving");
+	}
+	else{
+		res.status(404).end("Unauthorized.. Next-Time your IP will be blacklisted...");
+	}
+});
+
+app.post('/save_problem',(req,res) => {
+	if(req.session.idm && req.session.ptype){
+		firebase.database().ref(`sessionIB/${req.session.idm}/Problem`).set(req.body.message);
+		res.end("Done Saving");
+	}
+	else{
+		res.status(404).end("Unauthorized.. Next-Time your IP will be blacklisted...");
+	}
+});
+
 
 app.post('/compile/:feedsId',(req,res) => {
 	if(req.session.idm && req.session.ptype){
 		var result;
 		var error;
-		dbx.filesUpload({path: `/IB/${req.session.ptype}_${moment().format('LTS')}_${req.params.feedsId}`,
+		dbx.filesUpload({path: `/IB/${req.session.idm}/${req.session.ptype}_${moment().format('LTS')}_${req.params.feedsId}.txt`,
 						 contents: req.body.carrier,
 						 autorename:true
 						}).then(function (response) {
@@ -240,6 +507,7 @@ app.post('/compile/:feedsId',(req,res) => {
 		if(req.params.feedsId=="python2"){
 			let resultPromise = python.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
 			resultPromise.then(result => {
+				firebase.database().ref(`sessionIB/${req.session.idm}/Compiled`).push(result);
 				console.log(result);
 				if(result.stderr){
 					var n=result.stderr.search("-")+1;
@@ -254,6 +522,7 @@ app.post('/compile/:feedsId',(req,res) => {
 		else if(req.params.feedsId=="python3"){
 			let resultPromise = python.runSource(req.body.carrier, {executionPath: 'python3', stdin : req.body.carrier_ip});
 			resultPromise.then(result => {
+				firebase.database().ref(`sessionIB/${req.session.idm}/Compiled`).push(result);
 				if(result.stderr){
 					var n=result.stderr.search("-")+1;
 					result.stderr=result.stderr.substring(n);
@@ -267,6 +536,7 @@ app.post('/compile/:feedsId',(req,res) => {
 		else if(req.params.feedsId=="cpp"){
 			let resultPromise = cpp.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
 			resultPromise.then(result => {
+				firebase.database().ref(`sessionIB/${req.session.idm}/Compiled`).push(result);
 				if(result.stderr){
 					var n=result.stderr.search("-")+1;
 					result.stderr=result.stderr.substring(n);
@@ -280,6 +550,7 @@ app.post('/compile/:feedsId',(req,res) => {
 		else if(req.params.feedsId=="c"){
 			let resultPromise = c.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
 			resultPromise.then(result => {
+				firebase.database().ref(`sessionIB/${req.session.idm}/Compiled`).push(result);
 				if(result.stderr){
 					var n=result.stderr.search("-")+1;
 					result.stderr=result.stderr.substring(n);
@@ -293,6 +564,7 @@ app.post('/compile/:feedsId',(req,res) => {
 		else if(req.params.feedsId=="java"){
 			let resultPromise = java.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
 			resultPromise.then(result => {
+				firebase.database().ref(`sessionIB/${req.session.idm}/Compiled`).push(result);
 				if(result.stderr){
 					var n=result.stderr.search("-")+1;
 					result.stderr=result.stderr.substring(n);
@@ -306,6 +578,7 @@ app.post('/compile/:feedsId',(req,res) => {
 		else if(req.params.feedsId=="javascript"){
 			let resultPromise = node.runSource(req.body.carrier, {stdin : req.body.carrier_ip});
 			resultPromise.then(result => {
+				firebase.database().ref(`sessionIB/${req.session.idm}/Compiled`).push(result);
 				if(result.stderr){
 					var n=result.stderr.search("-")+1;
 					result.stderr=result.stderr.substring(n);
@@ -389,7 +662,7 @@ app.post('/compile/:feedsId',(req,res) => {
 		}
 		else if(req.params.feedsId=="C#"){
 			console.log(`echo "${req.body.carrier}" | tee /home/logfile.c`)
-			var tr = shell.exec(`echo "${req.body.carrier}" | tee /home/logfile.rb`)
+			var tr = shell.exec(`echo "${req.body.carrier}" | tee /home/logfile.cs`)
 			if(tr.code==0){
 				var tr1 = shell.exec(`csc /home/logfile.cs`)
 				if(tr1.code==0)

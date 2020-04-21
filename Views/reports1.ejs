@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Report</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <link rel="stylesheet prefetch" href='https://use.fontawesome.com/releases/v5.0.10/css/all.css'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github-gist.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css"/>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.7.1/remarkable.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/default.min.css">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+	<script type="text/javascript" src="../qrcode-generator/qrcode.js"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
+<style>
+.theme-dark {
+    --background-color: #222;
+    --bg-card-deck: #444444;
+    --text-color: #ccd2d8;
+    --tab-border: solid 1px #444;
+    --success: #3c9372;
+    --failure: #c24a3f;
+    --warning: #d28c23;
+    --info: #4083b6;
+    --badge-outline: #3c9372;
+    --badge-bg: #cdd3db;
+    --badge-text: #ccd2d9;
+    --failure-row: #c24a3f;
+    --warning-row: #d28c23;
+    --card-bg: #444;
+    --card-footer: #4f5758;
+    --form-input: #ececb5;
+    --hov-text: #d2dae5;
+    --h4-text: #ccd1d9;
+}
+.theme-light {
+    --tab-border: solid 1px #fff;
+    --text-color: #000000;
+    --success: #42a745;
+    --failure: #dc3544;
+    --warning: #f4c10b;
+    --info: #49a1b8;
+    --badge-outline: #040411;
+    --badge-bg: #f8f9fa;
+    --badge-text: #fff;
+    --failure-row: #f5c6cb;
+    --warning-row: #ffeeba;
+    --card-bg: #f7f7f7;
+    --hov-text: #fff;
+    --h4-text: #ffffff;
+}
+body {
+  padding-top:30px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+#execution-data {
+  padding: 10px;
+  border: var(--tab-border);
+  border-top: none;
+}
+.nav-tabs {
+  padding-top: 10px;
+  height: 105px;
+  overflow-y: auto;
+}
+.card-header {
+    background-color: var(--card-bg)!important;
+}
+.card-body {
+    background-color: var(--card-bg)!important;
+}
+.card-footer {
+    padding: .75rem 1.25rem;
+    background-color: var(--card-footer);
+}
+.card-deck {
+    background-color: var(--bg-card-deck)!important;
+}
+.form-control {
+    background: var(--form-input);
+}
+.custom-tab {
+  padding: 10px 15px;
+  margin-right: 0px;
+  height: 46px;
+  width: 59px;
+  text-align: center;
+  border: var(--tab-border);
+  border-bottom: none;
+  cursor:pointer;
+}
+body.theme-dark .text-white {
+    color: #ccd2d9!important;
+}
+h4 {
+    color: var(--h4-text);
+}
+body.theme-dark h1 {
+    color: #ccd2da;
+}
+body.theme-dark .bg-light>td {
+    background: #4f5858!important;
+}
+body.theme-dark .hljs {
+    background: #0f0f0f82!important;
+    color: #8d8787!important;
+}
+.bg-info {
+    background-color: var(--info)!important;
+}
+.bg-success {
+    background-color: var(--success)!important;
+}
+.alert-success {
+    background-color: var(--success)!important;
+}
+.alert-warning {
+    background-color: var(--warning)!important;
+}
+.alert-info {
+    background-color: var(--info)!important;
+}
+.bg-warning {
+    background-color: var(--warning)!important;
+}
+.badge-warning {
+    color: var(--badge-text)!important;
+    background-color: var(--warning)!important;
+}
+.table-warning>td {
+    background-color: var(--warning-row);
+}
+.alert-danger {
+    background-color: var(--failure)!important;
+}
+body.theme-dark .alert-dark {
+    background-color: #636467!important;
+}
+body.theme-dark .text-dark {
+    color: #d1dae4!important;
+}
+.badge-light {
+    color: #212529;
+    background-color: var(--badge-bg);
+}
+.bg-danger {
+    background-color: var(--failure)!important;
+}
+.table-danger>td {
+    background-color: var(--failure-row);
+}
+body.theme-dark .table .thead-light th {
+    background-color: #4f5858!important;
+    border-color: #dee2e6!important;
+    color: #ccd2d8!important;
+}
+.itPassed {
+  background: var(--success);
+  color: white;
+}
+.itFailed {
+  background: var(--failure);
+  color: white;
+}
+.resultsInfoPass {
+  color: var(--success);
+  padding-top: 4px;
+}
+.resultsInfoFail {
+  color: var(--failure);
+  padding-top: 4px;
+}
+.badge-outline-success {
+  color: var(--success);
+  border: 1px solid var(--success);
+  background-color: transparent;
+}
+.badge-outline {
+  color: var(--badge-outline);
+  border: 1px solid var(--badge-outline);
+  background-color: transparent;
+}
+.btn-outline-success {
+    color: var(--success)!important;
+    border-color: var(--success)!important;
+}
+.backToTop:hover {
+  background-color: var(--success);
+  border-color: var(--success);
+  color: var(--hov-text)!important;
+}
+.btn-outline-success:hover {
+  background-color: var(--success);
+  border-color: var(--success);
+  color: var(--hov-text)!important;
+}
+.btn-outline-secondary {
+  background-color: var(--success)!important;
+  color: var(--hov-text)!important;
+}
+body, html {
+  //height:100%;
+}
+.card {
+  overflow:hidden;
+}
+.card-body .rotate {
+  z-index: 8;
+  float: right;
+  height: 100%;
+}
+.card-body .rotate i {
+  color: rgba(20, 20, 20, 0.15);
+  position: absolute;
+  left: 0;
+  left: auto;
+  right: -10px;
+  bottom: 0;
+  display: block;
+  -webkit-transform: rotate(-44deg);
+  -moz-transform: rotate(-44deg);
+  -o-transform: rotate(-44deg);
+  -ms-transform: rotate(-44deg);
+  transform: rotate(-44deg);
+}
+.dyn-height {
+  max-height:350px;
+  overflow-y:auto;
+}
+.nav-pills .nav-link.active {
+  background-color: transparent!important;
+}
+.backToTop {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  font-size: 18px;
+  outline: none;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 4px;
+}
+.card-header .fa {
+  transition: .3s transform ease-in-out;
+}
+.card-header .collapsed .fa {
+  transform: rotate(90deg);
+}
+.single-line-tabs {
+  padding-top: 10px;
+  height: 60px;
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 20px;
+}
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 0px;
+  bottom: 4px;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  box-shadow: 0 0px 15px #2020203d;
+  background: white;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+input:checked + .slider {
+  background-color: #4083b6;
+}
+input:focus + .slider {
+  box-shadow: 0 0 1px #4083b6;
+}
+input:checked + .slider:before {
+  -webkit-transform: translateX(24px);
+  -ms-transform: translateX(24px);
+  transform: translateX(24px);
+  background: white;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+.table td{
+	word-break: break-all;
+}
+</style>
+	<script>
+		var compiled_files=[];
+		function file_res(item,index){
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "/report_files", false);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.onload = function() {
+				compiled_files.push(JSON.parse(this.responseText));
+			}
+			xhr.send(JSON.stringify({com_file:item}));
+		}
+		var snap = <%- snap %>;
+		var startTime = "<%- starttime %>";
+		var endTime = "<%- endtime %>";
+		var ssId = "<%- ssid %>";
+		var vLink = "<%- vlink %>";
+		var lLink = "<%- llink %>";
+		var Problem = "<%- problem %>";
+		var llis = <%- compiled_files %>;
+		var lChats = <%- lchats %>;
+		var lCompiled = <%- lcompiled %>;
+		llis.forEach(file_res);
+		var ttsop,ttoat,ttoaw,ttdis;
+		var oat=[]
+		var oaw=[]
+		var dis=[]
+		var toat=[]
+		var toaw=[]
+		var tdis=[]
+		var temp1=[]
+		var temp2=[]
+		var temp3=[]
+		var intdur = moment.duration(moment(endTime).diff(moment(startTime)));
+		var intdat = moment(startTime).format("LL");
+		var startingTime = moment(startTime).format("LTS");
+		var endingTime = moment(endTime).format("LTS");
+		function containsObject(obj, list) {
+			var i;
+			for (i = 0; i < list.length; i++) {
+				if (JSON.stringify(list[i]) === JSON.stringify(obj)) {
+					return true;
+				}
+			}
+		
+			return false;
+		}
+		
+		for (const [key, value] of Object.entries(snap)){
+			if(value.Action == 6 && (temp2.length!=0 || oaw.length==0)){
+				if(temp2.length==0)
+					temp2.push({Time:startTime});
+				temp2.push(value);
+				if(!containsObject(temp2,oaw)){
+					if(oat.length!=0)
+						if(!moment(oat[oat.length-1][0].Time).isBetween(moment(temp2[0].Time),moment(temp2[1].Time)) && !moment(oat[oat.length-1][1].Time).isBetween(moment(temp2[0].Time),moment(temp2[1].Time)) && temp2[0].Time!=temp2[1].Time){
+							oaw.push(temp2);
+							toaw.push(moment(temp2[1].Time).diff(moment(temp2[0].Time)))
+						}
+				}
+				temp2=[];
+			}
+				
+			else if(value.Action == 5 && (temp1.length!=0 || oat.length==0)){
+				if(temp1.length==0)
+					temp1.push({Time:startTime});
+				temp1.push(value);
+				if(!containsObject(temp1,oat)){
+					oat.push(temp1);
+					toat.push(moment(temp1[1].Time).diff(moment(temp1[0].Time)))
+				}
+				temp1=[];
+			}
+		
+			else if(value.Action == 1 && temp3.length!=0 && value.Type!="Candidate"){
+				if(temp3.length==0)
+					temp3.push({});
+				temp3.push(value)
+				if(!containsObject(temp3,dis)){
+					dis.push(temp3);
+					tdis.push(moment(temp3[1].Time).diff(moment(temp3[0].Time)))
+				}
+				temp3=[];
+			}
+			else{
+				if(value.Action==2 && temp3.length==0 && value.Type!="Candidate")
+					temp3.push(value)
+				else if(value.Action==3 && temp2.length==0)
+					temp2.push(value)
+				else if(value.Action==4 && temp1.length==0)
+					temp1.push(value)
+			}
+		}
+		if(!jQuery.isEmptyObject(temp1)){
+			temp1.push({Time:endTime})
+			oat.push(temp1)
+			toat.push(moment(temp1[1].Time).diff(moment(temp1[0].Time)))
+			temp1=[]
+		}
+		if(!jQuery.isEmptyObject(temp2)){
+			temp2.push({Time:endTime})
+			oaw.push(temp2)
+			toaw.push(moment(temp2[1].Time).diff(moment(temp2[0].Time)))
+			temp2=[]
+		}
+		
+		if(!jQuery.isEmptyObject(temp3)){
+			temp3.push({Time:endTime})
+			dis.push(temp3)
+			tdis.push(moment(temp3[1].Time).diff(moment(temp3[0].Time)))
+			temp3=[]
+		}
+		ttoaw = moment.duration(toaw.reduce((a, b) => a + b, 0));
+		ttoat = moment.duration(toat.reduce((a, b) => a + b, 0));
+		ttdis = moment.duration(tdis.reduce((a, b) => a + b, 0));
+		ttsop = ttoaw.asMilliseconds() + ttoat.asMilliseconds() + ttdis.asMilliseconds()
+		ttsop = moment.duration(ttsop)
+		
+	</script>
+</head>
+<body class="contents">
+  <div class="" style="width:100%;">
+        <div class="card">
+        <div class="card-header" id="content">
+		<!--<ul class="nav nav-pills mb-3 nav-justified" id="pills-tab" role="tablist">
+            <li class="nav-item bg-info active" data-toggle="tooltip" title="Click to view the Summary">
+                <a class="nav-link text-white" id="pills-summary-tab" data-toggle="pill" href="#pills-summary" role="tab" aria-controls="pills-summary" aria-selected="true">Summary</a>
+            </li>
+        </ul>-->
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-summary" role="tabcard" aria-labelledby="pills-summary-tab">
+<div class="row" style="justify-content: center;">
+  <div class="col-md-9 col-lg-12 main">
+   <h1 class="display-12 text-center">REPORT</h1>
+   <h5 class="text-center" id="mahd"></h5>
+   <div class="row">
+    <div class="col-lg-3 col-md-6">
+     <div class="card text-white card-success">
+      <div class="card-body bg-success">
+       <div class="rotate">
+        <i class="fa fa-retweet fa-5x"></i>
+       </div>
+       <h6 class="text-uppercase">Session ID</h6>
+       <h1 class="display-1" style="font-size: 1rem;" id="sessid"></h1>
+      </div>
+     </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+     <div class="card text-white card-danger">
+      <div class="card-body bg-success">
+       <div class="rotate">
+        <i class="fa fa-list fa-4x"></i>
+       </div>
+       <h6 class="text-uppercase">Interview Duration</h6>
+       <h1 class="display-1" style="font-size: 1rem;" id="intdur"></h1>
+      </div>
+     </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+     <div class="card text-white card-info">
+      <div class="card-body bg-success">
+       <div class="rotate">
+        <i class="fa fa-plus-circle fa-5x"></i>
+       </div>
+       <h6 class="text-uppercase">Interview Start Time</h6>
+       <h1 class="display-1" style="font-size: 1rem;" id="startingTime"></h1>
+      </div>
+     </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+     <div class="card text-white card-warning">
+      <div class="card-body bg-success">
+       <div class="rotate">
+        <i class="fa fa-share fa-5x"></i>
+       </div>
+       <h6 class="text-uppercase">Interview End Time</h6>
+       <h1 class="display-1" style="font-size: 1rem;" id="endingTime"></h1>
+      </div>
+     </div>
+    </div>
+   </div>
+   <hr>
+    <div class="row">
+    <div class="col">
+        <div class="row">
+        <div class="col-sm-12 mb-3">
+            <div class="card border-info">
+                <div class="card-body">
+                <h5 class="card-title text-uppercase text-white text-center bg-info">Events Recorded</h5>
+				<div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-inverse">
+                    <tr class="text-center">
+                        <th class="text-uppercase">Summary Item</th>
+                        <th class="text-uppercase">Count</th>
+                        <th class="text-uppercase">Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Away From The Window</td>
+                        <td class="text-center" id="cawc"></td>
+                        <td class="text-center" id="dcawc"></td>
+                    </tr>
+                    <tr>
+                        <td>On Another Tab</td>
+                        <td class="text-center" id="catc"></td>
+                        <td class="text-center" id="dcatc"></td>
+                    </tr>
+                    <tr>
+                        <td>Disconnected</td>
+                        <td class="text-center" id="notd"></td>
+                        <td class="text-center" id="dnotd"></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+                <span><i class="fas fa-stopwatch"></i></span><strong> Total duration:</strong><p id="ttsop"></p><br>
+                </div>
+            </div>
+        </div>
+        </div>
+		<div class="row">
+        <div class="col-sm-12 mb-3">
+            <div class="card border-info">
+                <div class="card-body">
+                <h5 class="card-title text-uppercase text-white text-center bg-info">Problems</h5>
+                <p id="prob" class="hljs less"></p>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-sm-12 mb-3">
+            <div class="card border-info">
+                <div class="card-body">
+                <h5 class="card-title text-uppercase text-white text-center bg-info">Compiled Files</h5>
+                <div id="codes">
+                </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-sm-12 mb-3">
+            <div class="card border-info">
+                <div class="card-body">
+                <h5 class="card-title text-uppercase text-white text-center bg-info">Chats</h5>
+                <div class="table-responsive">
+					<table class="table table-striped table-bordered">
+						<tbody id="chato">
+						</tbody>
+					</table>
+				</div>
+                </div>
+            </div>
+        </div>
+        </div>
+		<div class="row">
+        <div class="col-sm-12 mb-3">
+            <div class="card border-info">
+                <div class="card-body">
+                <h5 class="card-title text-uppercase text-white text-center bg-info">Miscellaneous</h5>
+                <h3>Interview Video:</h3>
+				<div id="vqr"></div>
+				<h4><a href="" target="_blank" id="dlink">Click Here</a></h4>
+                </div>
+            </div>
+        </div>
+        </div>
+    <hr>
+   </div>
+   </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+ </div>
+</div>
+</body>            
+<script>
+document.getElementById("mahd").innerHTML=moment(startTime).format("dddd, DD MMMM YYYY");
+document.getElementById("sessid").innerHTML="<b>"+ssId+"</b>";
+document.getElementById("prob").innerHTML=Problem;
+document.getElementById("intdur").innerHTML="<b>"+intdur.hours()+"</b>Hrs <b>"+intdur.minutes()+"</b>Mins <b>"+intdur.seconds()+"</b>Secs";
+document.getElementById("ttsop").innerHTML="<b>"+ttsop.hours()+"</b>Hrs <b>"+ttsop.minutes()+"</b>Mins <b>"+ttsop.seconds()+"</b>Secs";
+document.getElementById("dcawc").innerHTML="<b>"+ttoaw.hours()+"</b>Hrs <b>"+ttoaw.minutes()+"</b>Mins <b>"+ttoaw.seconds()+"</b>Secs";
+document.getElementById("dcatc").innerHTML="<b>"+ttoat.hours()+"</b>Hrs <b>"+ttoat.minutes()+"</b>Mins <b>"+ttoat.seconds()+"</b>Secs";
+document.getElementById("dnotd").innerHTML="<b>"+ttdis.hours()+"</b>Hrs <b>"+ttdis.minutes()+"</b>Mins <b>"+ttdis.seconds()+"</b>Secs";
+document.getElementById("startingTime").innerHTML="<b>"+startingTime+"</b>";
+document.getElementById("endingTime").innerHTML="<b>"+endingTime+"</b>";
+document.getElementById("cawc").innerHTML="<b>"+oaw.length+"</b>";
+document.getElementById("catc").innerHTML="<b>"+oat.length+"</b>";
+document.getElementById("notd").innerHTML="<b>"+dis.length+"</b>";
+var sub=0
+for (var key in lCompiled) {
+	cf = compiled_files[sub][0].split(".")[0].split("_")
+	var main = document.getElementById("codes");
+	var tree = document.createElement("pre")
+	var temp = document.createElement("table")
+	temp.setAttribute("class","table table-striped table-bordered")
+	var temp1 = document.createElement("tr")
+	temp1.setAttribute("class","text-center")
+	var temp11 = document.createElement("th")
+	temp11.setAttribute("class","text-uppercase")
+	temp11.setAttribute("style","background:bisque;")
+	temp11.innerHTML= cf[0]
+	temp1.appendChild(temp11)
+	var temp11 = document.createElement("th")
+	temp11.setAttribute("class","text-uppercase")
+	temp11.setAttribute("style","background:aquamarine;")
+	temp11.innerHTML= cf[2]
+	temp1.appendChild(temp11)
+	var temp11 = document.createElement("th")
+	temp11.setAttribute("class","text-uppercase")
+	temp11.setAttribute("style","background:bisque;")
+	temp11.innerHTML= cf[1]
+	temp1.appendChild(temp11)
+	temp.appendChild(temp1)
+	var temp1 = document.createElement("tr")
+	var temp2 = document.createElement("td")
+	temp2.setAttribute("colspan","3")
+	var temp11 = document.createElement("h3")
+	temp11.innerHTML= "Code:"
+	var temp12 = document.createElement("code")
+	temp12.innerHTML= compiled_files[sub][1]+"\n"
+	temp2.appendChild(temp11)
+	temp2.appendChild(temp12)
+	var temp11 = document.createElement("h3")
+	temp11.innerHTML= "Output:"
+	var temp12 = document.createElement("samp")
+	temp12.setAttribute("style","color:forestgreen")
+	temp12.setAttribute("class","hljs less")
+	if(lCompiled[key].exitCode==0)
+		if(lCompiled[key].stdout=="")
+			temp12.innerHTML="No Output"
+		else
+			temp12.innerHTML=lCompiled[key].stdout
+	else{
+		temp12.innerHTML="Error Type: "+lCompiled[key].errorType+"\n"+lCompiled[key].stderr
+		temp12.setAttribute("style","color:crimson")
+	}
+	temp2.appendChild(temp11)
+	temp2.appendChild(temp12)
+	var spa = document.createElement("br")
+	temp2.appendChild(spa);
+	var stat1 = document.createElement("span")
+	var stat2 = document.createElement("i")
+	stat2.setAttribute("class","fas fa-stopwatch")
+	stat1.appendChild(stat2)
+	var stat3 = document.createElement("strong")
+	stat3.innerHTML = " CPU Usage: <kbd>"+lCompiled[key].cpuUsage.toString()+" microseconds.</kbd>\n\n"
+	temp2.appendChild(stat1)
+	temp2.appendChild(stat3)
+	var stat1 = document.createElement("span")
+	var stat2 = document.createElement("i")
+	stat2.setAttribute("class","fas fa-database")
+	stat1.appendChild(stat2)
+	var stat3 = document.createElement("strong")
+	stat3.innerHTML = " Memory Usage: <kbd>"+lCompiled[key].memoryUsage.toString()+" Bytes.</kbd>\n"
+	temp2.appendChild(stat1)
+	temp2.appendChild(stat3)
+
+	temp1.appendChild(temp2)
+	temp.appendChild(temp1)
+	tree.appendChild(temp)
+	main.appendChild(tree)
+	sub+=1
+}
+</script>
+<script>
+var temp =  document.getElementById("chato")
+for (var key in lChats) {
+	var t1 = document.createElement("tr")
+	var t11 = document.createElement("th")
+	if(lChats[key].Type == "Candidate"){
+		t11.innerHTML=lChats[key].Type+'<var style="font-weight: 300;float: right;font-size: smaller;">'+moment(lChats[key].Time).format("DD/MM/YYYY HH:mm:ss")+'</var>'
+	}
+	else{
+		t11.innerHTML=lChats[key].Type+'<var style="font-weight: 300;float: right;font-size: smaller;">'+moment(lChats[key].Time).format("DD/MM/YYYY HH:mm:ss")+'</var>'
+	}
+	var t12 = document.createElement("td")
+	//t12.setAttribute("class","text-center")
+	t12.innerHTML=lChats[key].Text
+	t1.appendChild(t11)
+	t1.appendChild(t12)
+	temp.appendChild(t1)
+}
+</script>
+<script>
+var typeNumber = 9;
+var errorCorrectionLevel = 'L';
+var qr = qrcode(typeNumber, errorCorrectionLevel);
+//vLink= vLink.substring(0,vLink.length-1)+"1"
+qr.addData(vLink);
+qr.make();
+document.getElementById('vqr').innerHTML = qr.createImgTag();
+document.getElementById('dlink').setAttribute("href",vLink);
+</script>
+</html>

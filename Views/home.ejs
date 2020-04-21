@@ -8,12 +8,13 @@
 	<script src="popper.js/dist/umd/popper.min.js"></script>
 	<script src="bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="webrtc-adapter/out/adapter.js"></script>
+	<script src="deep-diff/dist/deep-diff.min.js"></script>
 	<script src="moment/moment.js"></script>
 	<script src="jquery-resizable-dom/dist/jquery-resizable.min.js"></script>
 	<link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
 	<link rel="stylesheet" href="three-dots/dist/three-dots.min.css">
-	<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.24/dist/peerjs.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
 	<!--<script src="peerjs/dist/peerjs.min.js"></script>-->
 	<!--<script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/peerjs@1.0.0/dist/peerjs.min.js"></script>
@@ -385,6 +386,38 @@
 .navbar-brand{
   margin-right: 0rem;
 }
+.pop_rec {
+	width: 20px;
+	height: 20px;
+	font-size: 0;
+	background-color: red;
+	border: 0;
+	border-radius: 35px;
+	outline: none;
+}
+
+.notRec{
+	background-color: darkred;
+}
+
+.Rec{
+	animation-name: pulse;
+	animation-duration: 1.5s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+}
+
+@keyframes pulse{
+	0%{
+		box-shadow: 0px 0px 5px 0px rgba(173,0,0,.3);
+	}
+	65%{
+		box-shadow: 0px 0px 5px 13px rgba(173,0,0,.3);
+	}
+	90%{
+		box-shadow: 0px 0px 5px 13px rgba(173,0,0,0);
+	}
+}
 </style>
 
 <body>
@@ -472,7 +505,12 @@
 		</div>
 		<% if (type) { %>
 			<div style="display:inline-flex;padding:5;width:100%;justify-content: flex-end;">
-				
+					<div style="display: flex;align-items: center;padding-right: 15px;">
+						<p style="display: contents;justify-content: center;font-weight: bold;color: antiquewhite;" id="showrecd">Recording..</p>
+					</div>
+					<div style="padding-right: 70px;align-self: center;">
+						<button id="recButton" class="pop_rec"></button>
+					</div>
 					<div style="padding-right:10">
 						<button id="exec" type="button" class="btn btn-info" onclick="hide_logs()" style="border-radius: 15px;">Logs</button>
 					</div>
@@ -762,6 +800,85 @@
 	function hide_logs(){
 		document.getElementById("mydiv3").style.visibility="visible";
 	}
+	function save_chat(xyz){
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", "save_chat", true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.onload = function() {
+			console.log(this.responseText);
+		}
+		xhr.send(JSON.stringify({message : xyz, time : moment().format()}));
+	}
+	function save_log(xyz, dtime, ttype){
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", "save_log", true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.onload = function() {
+			console.log(this.responseText);
+		}
+		xhr.send(JSON.stringify({message : xyz, time : dtime, Atype : ttype}));
+	}
+	<% if (type) { %>
+		function save_problem(xyz){
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "save_problem", true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.onload = function() {
+				console.log(this.responseText);
+			}
+			xhr.send(JSON.stringify({message : xyz}));
+		}
+		
+		function time_start(){
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "time_track", true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.onload = function() {
+				console.log(this.responseText);
+			}
+			xhr.send(JSON.stringify({}));
+		}
+		
+		function time_end(){
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "time_track_end", true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.onload = function() {
+				console.log(this.responseText);
+			}
+			xhr.send(JSON.stringify({}));
+		}
+		
+		function save_video(xyz){
+			var blob = new Blob(xyz, {
+				type: 'video/webm'
+			});
+
+			var fd = new FormData();
+			fd.append('upl', blob);
+			var url = URL.createObjectURL(blob);
+			var a = document.createElement('a');
+			document.body.appendChild(a);
+			a.style = 'display: none';
+			a.href = url;
+			a.download = 'test.webm';
+			a.click();
+			window.URL.revokeObjectURL(url);
+			/*var xhr = new XMLHttpRequest();
+			xhr.open("POST", "save_video", true);
+			xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+			xhr.onload = function() {
+				console.log(this.responseText);
+			}
+			console.log(xyz);
+			xhr.send(JSON.stringify({videoChunk : xyz}));*/
+			fetch('/save_video',
+			{
+				method: 'post',
+				body: fd
+			}); 
+		}
+	<% } %>
 	
 	/*
 	ep.on("change", function(e){
@@ -808,6 +925,7 @@
 		var yup1=true;
 		var xmas;
 		var fan;
+		var urt=true;
 		var marker;
 		var interviewer;
 		var user_text;
@@ -815,10 +933,11 @@
         var conn;
 		var call;
 		var interviewer;
+		var ptype = <%- type %>;
 		var Range = ace.require('ace/range').Range;
 		<% if (type) { %>
 		var merger;
-		let mediaRecorder;
+		var mediaRecorder;
 		var recordedChunks = [];
 		<% } %>
 		l = "<%- sender %>";
@@ -846,18 +965,20 @@
         function connect(c) {
             conn = c;
             console.log('in connect', conn.peer);
-			<% if (type) { %>
-				Notify(user_text+"I'm Online..", null, null, "success");
-				document.getElementById("resize_op1").value=document.getElementById("resize_op1").value+moment().format()+">>"+user_text+"I'm Online.."+"\n"
-			<% } else { %>
+		
+			<% if (!type) { %>
+				jtime=moment().format()
+				save_log(jtime+">>"+user_text+"I'm Online..",jtime,1);
 				Notify(user_text+"I'm Online..", null, null, "success");
 			<% } %>
 			call = peer.call(conn.peer, window.localStream);
-
 			call.on('stream', function (stream) {
+				console.log("Connected Video Stream")
 				window.peer_stream = stream;
 				onReceiveStream(stream, 'peer-camera');
 			<% if (type) { %>
+			 if(urt){
+				urt=false;
 				merger = new VideoStreamMerger();
 				merger.addStream(window.peer_stream, {
 					x: 0, // position of the topleft corner
@@ -878,6 +999,7 @@
 
 				// Start the merging. Calling this makes the result available to us
 				merger.start();
+				window.merger_video = merger.result;
 				let options = {mimeType: 'video/webm;codecs=vp9'};
 				if (!MediaRecorder.isTypeSupported(options.mimeType)) {
 					console.error(`${options.mimeType} is not Supported`);
@@ -893,16 +1015,27 @@
 				}
 				
 				try {
-					mediaRecorder = new MediaRecorder(merger.result, options);
+					mediaRecorder = new MediaRecorder(window.merger_video, options);
 				} catch (e) {
 					console.error('Exception while creating MediaRecorder:', e);
 					return;
 				}
 				mediaRecorder.ondataavailable = handleDataAvailable;
-				mediaRecorder.start();
+				mediaRecorder.start(1000);
+				time_start();
+				Notify(user_text+"I'm Online..", null, null, "success");
+				jtime=moment().format()
+				save_log(jtime+">>"+user_text+"I'm Online..",jtime,1);
+				document.getElementById("resize_op1").value=document.getElementById("resize_op1").value+moment().format()+">>"+user_text+"I'm Online.."+"\n"
+			 }
 			<% } %>
 				//onReceiveStream(merger.result, 'merge-camera');
 			});
+			function handleDataAvailable(event) {
+				//console.log('handleDataAvailable', event);
+					if (event.data && event.data.size > 0)
+						recordedChunks.push(event.data);
+			}
             //$('#rid').val(conn.peer);
             //$('#rid').prop('disabled', true);
             //$('#progbar').width('100%');
@@ -944,9 +1077,18 @@
 				}
 			<% } %>
 				else if(data.action=="alert_log"){
+					jtime=moment().format()
 					<% if (type) { %>
-						document.getElementById("resize_op1").value=document.getElementById("resize_op1").value+moment().format()+">>"+user_text+data.message+"\n"
+						document.getElementById("resize_op1").value=document.getElementById("resize_op1").value+jtime+">>"+user_text+data.message+"\n"
 					<% } %>
+					if(data.message == "Cursor away from Window")
+						save_log(jtime+">>"+user_text+data.message,jtime,3);
+					else if(data.message == "On another tab")
+						save_log(jtime+">>"+user_text+data.message,jtime,4);
+					else if(data.message == "Returned to Current Tab")
+						save_log(jtime+">>"+user_text+data.message,jtime,5);
+					else if(data.message == "Cursor on the Window")
+						save_log(jtime+">>"+user_text+data.message,jtime,6);
 					Notify(user_text+data.message, null, null, data.type);
 				}
 				else{
@@ -997,12 +1139,14 @@
 				console.log("Candidate left");
 			});
 			conn.on('close',function(){
+				jtime = moment().format()
 				<% if (type) { %>
-					document.getElementById("resize_op1").value=document.getElementById("resize_op1").value+moment().format()+">>"+user_text+"I'm Disconnected.."+"\n"
+					document.getElementById("resize_op1").value=document.getElementById("resize_op1").value+jtime+">>"+user_text+"I'm Disconnected.."+"\n"
 					Notify(user_text+"I'm Disconnected..", null, null, "danger");
 				<% } else { %>
 					Notify(user_text+"I'm Disconnected..", null, null, "danger");
 				<% } %>
+				save_log(jtime+">>"+user_text+"I'm Disconnected..",jtime,2);
 				console.log("Candidate closed");
 			});
         }
@@ -1093,6 +1237,7 @@
 		$('.send-opp').click(function(){
 			var tes1=document.getElementById("w3mission").value.split('\n').join('<br>');
 			document.getElementById("w3mission").value="";
+			save_chat(tes1);
 			conn.send({action:"message_s",message:tes1});
 			var x=document.createElement("li");
 			x.setAttribute("class","send-msg float-right mb-2");
@@ -1125,31 +1270,15 @@
 	<% if (type) { %>
 		function res_po(){
 			var tes1=document.getElementById("resize_op").value;
+			save_problem(tes1);
 			conn.send({action:"recieve_prob",message:tes1});
 		}
 	
-	function handleDataAvailable(event) {
-		console.log('handleDataAvailable', event);
-		if (event.data && event.data.size > 0) {
-			recordedChunks.push(event.data);
-		}
-	}
-	
 	function download() {
+		conn.close();
+		time_end();
 		mediaRecorder.stop();
-		setTimeout(function(){
-			var blob = new Blob(recordedChunks, {
-				type: 'video/webm'
-			});
-			var url = URL.createObjectURL(blob);
-			var a = document.createElement('a');
-			document.body.appendChild(a);
-			a.style = 'display: none';
-			a.href = url;
-			a.download = 'test.webm';
-			a.click();
-			window.URL.revokeObjectURL(url);}
-		,2000);
+		save_video(recordedChunks);
 	}
 	
 	<% } %>
@@ -1345,12 +1474,26 @@ Notify = function(text, callback, close_callback, style) {
 		$(document).mouseleave(function () {
 			conn.send({action:"alert_log",message:"Cursor away from Window",type:"danger"});
 		});
+		
+		$(document).mouseenter(function () {
+			conn.send({action:"alert_log",message:"Cursor on the Window",type:"danger"});
+		});
+		
 		function userCheated() {
 		// The user cheated by leaving this window (e.g opening another window)
 		// Do something
 			conn.send({action:"alert_log",message:"On another tab",type:"danger"});
 		}
+		
+		function userReturn() {
+		// The user cheated by leaving this window (e.g opening another window)
+		// Do something
+		//	conn.send({action:"alert_log",message:"On another tab",type:"danger"});
+			conn.send({action:"alert_log",message:"Returned to Current Tab",type:"danger"});
+		}
+		
 		window.onblur = userCheated;
+		window.onfocus = userReturn;
 	<% } %>
 	
 	
@@ -1373,6 +1516,24 @@ var fr=false
 $('#content').focusout(function(ev)
 {
    $('#content').hide();
+});
+$('#recButton').addClass("Rec");
+
+$('#recButton').click(function(){
+	if($('#recButton').hasClass('notRec')){
+		$('#recButton').removeClass("notRec");
+		$('#recButton').addClass("Rec");
+		if(mediaRecorder)
+			mediaRecorder.resume();
+		document.getElementById("showrecd").innerHTML="Recording..";
+	}
+	else{
+		$('#recButton').removeClass("Rec");
+		$('#recButton').addClass("notRec");
+		if(mediaRecorder)
+			mediaRecorder.pause();
+		document.getElementById("showrecd").innerHTML="Record";
+	}
 });
 </script>
 <!--<script src="connection.js" type="text/javascript" charset="utf-8"></script>-->
