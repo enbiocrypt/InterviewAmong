@@ -1,7 +1,7 @@
 
 <html>
 <head>
-	<title>Cool</title>
+	<title>IB</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="jquery/dist/jquery.min.js"></script>
@@ -25,400 +25,8 @@
 	<% if (type) { %>
 		<script src="video-stream-merger/dist/video-stream-merger.js"></script>
 	<% } %>	
+	<link rel="stylesheet" href="css/all.css">
 </head>
-
-<style>
-.custom-control-label::before, .custom-file-label, .custom-select{
-	background-color: #007bff;
-}
-#my-camera
-{
-    transform: rotateY(180deg);
-    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
-    -moz-transform:rotateY(180deg); /* Firefox */
-}
-#peer-camera
-{
-    transform: rotateY(180deg);
-    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
-    -moz-transform:rotateY(180deg); /* Firefox */
-}
-#notifications {
-    cursor: pointer;
-    position: fixed;
-    top: 0px;
-    z-index: 9999;
-    margin-bottom: 22px;
-    margin-right: 15px;
-    //max-width: 300px;   
-}
-#container{
-	height:100%;
-	width:auto;
-	white-space:nowrap;
-	overflow:hidden;
-	position:relative;
-	}
-#editor{
-	flex: 0 0 auto;
-	height: 80vh;
-	min-height: 20vh;
-	max-height: 80vh;
-	width: 100%;
-	//overflow:auto;
-	//resize:vertical;
-	//display: inline-block;
-	}
-#output{
-	flex: 1 1 auto;
-	width: 100%;
-	height: 10vh;
-	min-height: 10vh;
-	max-height: 70vh;
-	resize: none;
-	background: #272822;
-    color: red;
-	border: none;
-	}
-#input{
-	height: 30%;
-	min-height: 30vh;
-	resize: none;
-	}
-.MyCursorClass {
-    position: absolute;
-    border-left: solid gold;
-}
-.splitter-horizontal {
-  flex: 0 0 auto;
-  height: 18px;
-  background: url(https://raw.githubusercontent.com/RickStrahl/jquery-resizable/master/assets/hsizegrip.png) center center no-repeat #535353;
-  cursor: row-resize;
-}
-  .chat-main{
-	position: fixed;
-	width: 260px;
-	bottom: 0;
-	right: 0px;
-}
-.header-one{
-	background: #404040;
-}
-.name h6{
-	display: inline-block;
-	font-size: 14px;
-}
-.options i,.options .arrow-up{
-	height: 25px;
-	width: 25px;
-}
-.options i{
-	color: #B2B2B2;
-	font-size: 16px;
-	cursor: pointer;
-}
-.options .hover:hover, .options .arrow-up:hover{
-	background: #737373;
-}
-.options .arrow-up{
-    display: inline-block;
-    line-height: 0;
-}
-.options .hover:hover, .options .arrow-up:hover .fa-arrow-up{
-	color: #fff;
-}
-.options .fa-arrow-up{
-	transform: rotate(40deg);
-}
-.header-two{
-	border-top: 2px solid #35AC19;
-	background: #ECEFF1;
-	color: #5E6060;
-	padding: 8px 0px 4px 8px;
-	box-shadow: 0px 6px 13px -7px #c1c1c1;
-	z-index: 1000;
-    position: absolute;
-}
-.options-left i, .options-right i{
-	cursor: pointer;
-}
-.options-left i:hover, .options-right i:hover{
-	color: #000;
-}
-.chats{
-	height: 285px;
-	overflow-x: scroll;
-	overflow-x: hidden;
-	background: #ECEFF1;
-	position: relative;
-    //top: 35px;
-}
-.chats ul li{
-	display: inline-block;
-	list-style: none;
-	clear: both;
-	font-size: 13px;
-}
-.send-msg{
-	position: relative;
-}
-.send-msg:after{
-	content: "";
-	width:0;
-	height:0;
-	top: 0px;
-	right: -8px;
-	position: absolute;
-	border-top: 8px solid #CFD8DC;
-	border-left: 8px solid transparent;
-	border-right: 8px solid transparent;
-}
-.send-msg p{
-	background: #CFD8DC;
-}
-.sender-img{
-	display: inline;
-}
-.sender-img img{
-	width: 32px;
-	height: 32px;
-	border-radius: 100%;
-}
-.receive-msg .receive-msg-desc{
-	display: inline-block;
-	position: relative;
-}
-.receive-msg-desc:before{
-	content: "";
-	width:0;
-	height:0;
-	top: 0px;
-	left: -8px;
-	position: absolute;
-	border-top: 8px solid #fff;
-	border-left: 8px solid transparent;
-	border-right: 8px solid transparent;
-}
-.receive-msg-time,.send-msg-time{
-	color: #7D7E87;
-	font-size: 10px;
-}
-.receive-msg-time i{
-	font-size: 4px;
-}
-.msg-box{
-	//margin-top: 35px;
-}
-.msg-box i{
-	color: #404040;
-}
-.msg-box textarea{
-	font-size: 14px;
-}
-.msg-box textarea:focus{
-	outline: none;
-}
-.splitter {
-  flex: 0 0 auto;
-  width: 18px;  
-  background: url(https://raw.githubusercontent.com/RickStrahl/jquery-resizable/master/assets/vsizegrip.png) center center no-repeat #535353;
-  min-height: 200px;
-  cursor: col-resize;  
-}
-.panel-left {
-  flex: 0 0 auto;
-  min-width:40vw;
-  max-width:65vw;
-  width:50vw;
-  /* only manually resize */
-}
-.panel-right {
-  flex: 1 1 auto;
-  /* resizable */
-}
-#w3mission::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
-}
-#typing_b {
-	visibility:hidden;
-}
-#mydiv1 {
-  position: absolute;
-  z-index: 9;
-  background-color: #f1f1f1;
-  text-align: center;
-  border: 1px solid #d3d3d3
-}
-
-#mydiv3 {
-  position: absolute;
-  z-index: 9;
-  background-color: #f1f1f1;
-  text-align: center;
-  border: 1px solid #d3d3d3
-}
-
-#mydiv1header {
-  cursor: move;
-  z-index: 10;
-  background-color: #2196F3;
-  color: #fff;
-  text-align-last: left;
-  font-weight: lighter;
-}
-
-#mydiv3header {
-  cursor: move;
-  z-index: 10;
-  background-color: indianred;
-  color: #fff;
-  text-align-last: left;
-  font-weight: lighter;
-}
-
-#mydiv1header1 {
-  z-index: 10;
-  background-color: #2196F3;
-  color: #fff;
-  text-align-last: left;
-  font-weight: lighter;
-}
-
-#mydiv2header1 {
-  z-index: 10;
-  background-color: #2196F3;
-  color: #fff;
-  padding:5px;
-}
-
-#mydiv2header {
-  z-index: 10;
-  background-color: #2196F3;
-  color: #fff;
-}
-
-#mydiv4header {
-  z-index: 10;
-  background-color: indianred;
-  color: #fff;
-}
-.resize_op {
-  overflow-y: scroll;
-  resize: both;
-  max-width: 50vw;
-  max-height: 50vh;
-  border: 1px solid black;
-  min-width: 400px;
-  min-height: 250px;
-}
-
-.preload{
- width: 100%;
- height: 100%;
- background: #333;
- position: fixed;
- top: 0;
- left: 0;
- z-index: 1;
-}
-.logo {
- width: 900px;
- height: 70px;
- margin: 150px auto 50px auto;
- font-size: 50px;
- text-shadow: -1px 2px 2px #000;
- text-align: center;
- color: azure;
-}
-.loader-frame {
- width: 70px;
- height: 70px;
- margin: auto;
- position: relative;
-}
-.loader1, .loader2 {
- position: absolute;
- border: 5px solid transparent;
- border-radius: 50%;
-}
-.loader1 {
- width: 70px;
- height: 70px;
- border-top: 5px solid azure;
- border-bottom: 5px solid azure;
- animation: clockwisespin 2s infinite;
-}
-.loader2 {
- width: 60px;
- height: 60px;
- border-left: 5px solid darkturquoise;
- border-right: 5px solid darkturquoise;
- top: 5px; left: 5px;
- animation: anticlockwisespin 2s infinite;
-}
-
-
-@keyframes clockwisespin {
- from {transform: rotate(0deg);}
- to {transform: rotate(360deg);}
-}
-@keyframes anticlockwisespin {
- from {transform: rotate(0deg);}
- to {transform: rotate(-360deg);}
-}
-@keyframes fadeout {
- from {opacity: 1;}
- to {opacity: 0;}
-}
-
-.active, .collapsible:hover {
-  background-color: #555;
-}
-
-.content {
-  position:fixed;
-  padding: 5px;
-  display: none;
-  overflow: hidden;
-  background-color: #f1f1f1;
-}
-.navbar-brand{
-  margin-right: 0rem;
-}
-.pop_rec {
-	width: 20px;
-	height: 20px;
-	font-size: 0;
-	background-color: red;
-	border: 0;
-	border-radius: 35px;
-	outline: none;
-}
-
-.notRec{
-	background-color: darkred;
-}
-
-.Rec{
-	animation-name: pulse;
-	animation-duration: 1.5s;
-	animation-iteration-count: infinite;
-	animation-timing-function: linear;
-}
-
-@keyframes pulse{
-	0%{
-		box-shadow: 0px 0px 5px 0px rgba(173,0,0,.3);
-	}
-	65%{
-		box-shadow: 0px 0px 5px 13px rgba(173,0,0,.3);
-	}
-	90%{
-		box-shadow: 0px 0px 5px 13px rgba(173,0,0,0);
-	}
-}
-</style>
 
 <body>
 <% if (!type) { %>
@@ -699,126 +307,13 @@
 		peer = new Peer(l, {host: 'localhost', port: 3000, path: '/api'});
 		conn = peer.connect(p, {host: 'localhost', port: 3000, path: '/api'});
 	}*/
-	var temp;
-	var arr=[];
-	ace.require("ace/ext/language_tools");
-	window.ep=ace.edit("editor");
-	ep.getSession().setUseWrapMode(true);
-	//ep.setOption("indentedSoftWrap", false);
-	ep.setOptions({
-		indentedSoftWrap:true,
-		enableBasicAutocompletion: true,
-		enableLiveAutocompletion: true
-	});
-	ep.setShowPrintMargin(false);
-	ep.setFontSize(16);
-	ep.setTheme("ace/theme/monokai");
-	//ep.setTheme("ace/theme/clouds");
-	ep.session.setMode("ace/mode/python");
-	ep.setAutoScrollEditorIntoView(true);
-	function seteditor(){
-		//arr[temp]=ep.getSession().getValue();
-		var x = document.getElementById("selection").value;
-		if(x=="python2" || x=="python3"){
-			/*if(x=="python3")
-				temp=0;
-			else
-				temp=1;*/
-			ep.session.setMode("ace/mode/python");
-		}
-		else if(x=="c" || x=="cpp"){
-			/*if(x=="cpp")
-				temp=2;
-			else
-				temp=3;
-			*/
-			ep.session.setMode("ace/mode/c_cpp");
-		}
-		else if(x=="java"){
-			//temp=4;
-			ep.session.setMode("ace/mode/java");
-		}
-		else if(x=="mysql"){
-			//temp=4;
-			ep.session.setMode("ace/mode/mysql");
-		}
-		else if(x=="javascript"){
-			//temp=4;
-			ep.session.setMode("ace/mode/javascript");
-		}
-		else if(x=="R"){
-			//temp=4;
-			ep.session.setMode("ace/mode/r");
-		}
-		else if(x=="Ruby"){
-			//temp=4;
-			ep.session.setMode("ace/mode/ruby");
-		}
-		else if(x=="C#"){
-			//temp=4;
-			ep.session.setMode("ace/mode/csharp");
-		}
-		/*
-		if(arr[temp])
-			ep.setValue(arr[temp],1);
-		else
-			ep.setValue("",-1);
-		*/
-		document.getElementById("editor").childNodes[0].focus();
-	}
-	seteditor();
-	document.getElementById("editor").childNodes[0].focus();
-	function submit(){
-			document.getElementById("exec").disabled=true;
-			document.getElementById("exec").childNodes[0].classList.value="spinner-border spinner-border-sm";
-			var xhr = new XMLHttpRequest();
-			xhr.open("POST", "compile/"+document.getElementById("selection").value, true);
-			xhr.setRequestHeader('Content-Type', 'application/json');
-			
-			xhr.onload = function() {
-				if(this.responseText=="Wrong Selection" || this.responseText=="Server Error" ){
-						document.getElementById("status").innerHTML=this.responseText.fontcolor("red");
-					}
-				else{
-						console.log(this.responseText);
-						var rest=JSON.parse(this.responseText);
-						if(rest.result_output.errorType){
-							var temp=rest.result_output.errorType+" Error";
-							//document.getElementById("status").innerHTML=temp.fontcolor("red");
-							document.getElementById('output').value=rest.result_output.stderr;
-						}
-						else{
-							//document.getElementById("status").innerHTML="Successfully Compiled".fontcolor("green");
-							document.getElementById('output').value=rest.result_output.stdout;
-						}
-					}
-					document.getElementById("exec").childNodes[0].classList.value="fa fa-chevron-right";
-					document.getElementById("exec").disabled=false;
-				}
-		xhr.send(JSON.stringify({carrier : ep.getSession().getValue(), carrier_ip : document.getElementById("input").value}));
-	}
-	function hide_logs(){
-		document.getElementById("mydiv3").style.visibility="visible";
-	}
-	function save_chat(xyz){
-		var xhr = new XMLHttpRequest();
-		xhr.open("POST", "save_chat", true);
-		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.onload = function() {
-			console.log(this.responseText);
-		}
-		xhr.send(JSON.stringify({message : xyz, time : moment().format()}));
-	}
-	function save_log(xyz, dtime, ttype){
-		var xhr = new XMLHttpRequest();
-		xhr.open("POST", "save_log", true);
-		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.onload = function() {
-			console.log(this.responseText);
-		}
-		xhr.send(JSON.stringify({message : xyz, time : dtime, Atype : ttype}));
-	}
-	<% if (type) { %>
+	</script>
+<script src="src/editor_create.js"></script>
+<script src="src/compile_select.js"></script>
+<script src="src/save_log.js"></script>
+<script>
+		
+<% if (type) { %>
 		function save_problem(xyz){
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", "save_problem", true);
@@ -879,6 +374,8 @@
 			}); 
 		}
 	<% } %>
+</script>
+<script>
 	
 	/*
 	ep.on("change", function(e){
@@ -919,8 +416,8 @@
 			}
 	});*/
 </script>
-	<script>
-		//autosize(document.getElementById("w3mission"));
+<script>
+//autosize(document.getElementById("w3mission"));
 		var yup=true;
 		var yup1=true;
 		var xmas;
@@ -935,6 +432,8 @@
 		var interviewer;
 		var ptype = <%- type %>;
 		var Range = ace.require('ace/range').Range;
+		var mark_row;
+		var mark_col;
 		<% if (type) { %>
 		var merger;
 		var mediaRecorder;
@@ -948,6 +447,19 @@
 		}
 		else
 			user_text="Interviewer: ";
+			
+		function save_SourceCode(){
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "save_SourceCode", true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.onload = function() {
+				console.log(this.responseText);
+			}
+			if(marker)
+				xhr.send(JSON.stringify({message : ep.getSession().getValue(), time : moment().format(), cur_c : ep.getCursorPosition(), cur_i : {row : mark_row, col : mark_col}, lang_id : ep.getSession().getMode().$id}));
+			else
+				xhr.send(JSON.stringify({message : ep.getSession().getValue(), time : moment().format(), cur_c : ep.getCursorPosition(), cur_i : {row : 0, col : 0}, lang_id : ep.getSession().getMode().$id}));
+		}
 		/*var sock_client = io.connect('https://enbiocrypts.nl');
 		sock_client.on('connect', function() {
 			console.log(`sock_client connect`);
@@ -1100,15 +612,21 @@
 					if(data.action=="insert"){
 						ep.session.insert(data.start,data.lines.join("\n"));
 						ep.gotoLine(m.row+1, m.column, 1);
+						mark_row = data.end.row;
+						mark_col = data.end.column;
 						marker=ep.session.addMarker(new Range(data.end.row,data.end.column,data.end.row), "MyCursorClass", "line", true);
 						//ep.insert(data.lines.join("\n"));
 					}
 					else if(data.action=="remove"){
 						ep.session.remove({start:data.start,end:data.end});
 						ep.gotoLine(m.row+1, m.column, 1);
+						mark_row = data.start.row;
+						mark_col = data.start.column;
 						marker=ep.session.addMarker(new Range(data.start.row,data.start.column,data.start.row), "MyCursorClass", "line", true);
 					}
 					else if(data.action=="move"){
+						mark_row = data.start.row;
+						mark_col = data.start.column;
 						marker=ep.session.addMarker(new Range(data.start.row,data.start.column,data.start.row), "MyCursorClass", "line", true);
 					}
 					
@@ -1165,6 +683,7 @@
 			console.log(e);
 			if(yup){
 				conn.send({action:"move",start : ep.getCursorPosition()});
+				save_SourceCode();
 				console.log({mouse : ep.getCursorPosition()});
 			}
 		});
@@ -1184,6 +703,7 @@
 					}
 				}
 			}
+			save_SourceCode();
             conn.send(e);
 			}
         });
@@ -1282,222 +802,22 @@
 	}
 	
 	<% } %>
-    </script>
+</script>
+<script src="src/div_drag.js"></script>
 <script>
-//Make the DIV element draggagle:
-
-dragElement(document.getElementById("mydiv1"));
 <% if (type) { %>
 	dragElement(document.getElementById("mydiv3"));
 <% } %>
-function dragElement(elmnt) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  if (document.getElementById(elmnt.id + "header")) {
-    /* if present, the header is where you move the DIV from:*/
-    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
-  } else {
-    /* otherwise, move the DIV from anywhere inside the DIV:*/
-    elmnt.onmousedown = dragMouseDown;
-  }
-
-  function dragMouseDown(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // get the mouse cursor position at startup:
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
-    document.onmousemove = elementDrag;
-  }
-
-  function elementDrag(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-  }
-
-  function closeDragElement() {
-    /* stop moving when mouse button is released:*/
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
-};
 </script>
 <% if (!type) { %>
-<script type="text/javascript">
-
-(function(){
- 
- var preload = document.getElementById("preload");
- var loading = 0;
- var id = setInterval(frame, 64);
-
- function frame(){
-	
-	if(conn){
-		if(loading == 50) {
-			clearInterval(id);
-			document.getElementById("preload").style.visibility="hidden";
-			document.getElementById("container").style.visibility="visible";
-		}
-		else {
-			loading = loading + 1;
-			if(loading == 40) {
-				preload.style.animation = "fadeout 1s ease";
-			}
-		}
-	}
-  
- }
-
-
-})();
-</script>
+<script type="text/javascript" src="src/preloader.js"></script>
 <% } %>
-<script>
-Notify = function(text, callback, close_callback, style) {
+<script src="src/live_notify.js"></script>
+<script src="src/video_call.js"></script>
+<% if (!type) { %>
+<script src="src/user_cheat.js"></script>
+<% } %>
 
-	var time = '10000';
-	var $container = $('#notifications');
-	var icon = '<i class="fa fa-info-circle "></i>';
- 
-	if (typeof style == 'undefined' ) style = 'warning'
-  
-	var html = $('<div class="alert alert-' + style + '  hide">' + icon +  " " + text + '</div>');
-  
-	$('<a>',{
-		text: '×',
-		class: 'button close',
-		style: 'padding-left: 10px;',
-		href: '#',
-		click: function(e){
-			e.preventDefault()
-			close_callback && close_callback()
-			remove_notice()
-		}
-	}).prependTo(html)
-
-	$container.prepend(html)
-	html.removeClass('hide').hide().fadeIn('slow')
-
-	function remove_notice() {
-		html.stop().fadeOut('slow').remove()
-	}
-	
-	var timer =  setInterval(remove_notice, time);
-
-	$(html).hover(function(){
-		clearInterval(timer);
-	}, function(){
-		timer = setInterval(remove_notice, time);
-	});
-	
-	html.on('click', function () {
-		clearInterval(timer)
-		callback && callback()
-		remove_notice()
-	});
-  
-  
-}
-</script>
-<script>
-    peer.on('call', function (call) {
-            // Answer the call with your own video/audio stream
-            call.answer(window.localStream);
-
-            // Receive data
-            call.on('stream', function (stream) {
-                // Store a global reference of the other user stream
-                window.peer_stream = stream;
-                // Display the stream of the other user in the peer-camera video element !
-                onReceiveStream(stream, 'peer-camera');
-            });
-
-            // Handle when the call finishes
-            call.on('close', function(){
-                //alert("The videocall has finished");
-            });
-
-            // use call.close() to finish a call
-    });
-
-    /**
-     * Starts the request of the camera and microphone
-     *
-     * @param {Object} callbacks
-     */
-    function requestLocalVideo(callbacks) {
-        // Monkeypatch for crossbrowser geusermedia
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-        // Request audio an video
-        navigator.getUserMedia({ audio: true, video: true }, callbacks.success , callbacks.error);
-    }
-
-    /**
-     * Handle the providen stream (video and audio) to the desired video element
-     *
-     * @param {*} stream
-     * @param {*} element_id
-     */
-	
-    function onReceiveStream(stream, element_id) {
-        // Retrieve the video element according to the desired
-        var video = document.getElementById(element_id);
-        // Set the given stream as the video source
-        //video.src = window.URL.createObjectURL(stream);
-		video.srcObject=stream;
-        // Store a global reference of the stream
-        window.peer_stream = stream;
-    }
-
-    requestLocalVideo({
-        success: function(stream){
-            window.localStream = stream;
-            onReceiveStream(stream, 'my-camera');
-        },
-        error: function(err){
-            alert("Cannot get access to your camera and video !");
-            console.error(err);
-        }
-    });
-	<% if (!type) { %>
-		$(document).mouseleave(function () {
-			conn.send({action:"alert_log",message:"Cursor away from Window",type:"danger"});
-		});
-		
-		$(document).mouseenter(function () {
-			conn.send({action:"alert_log",message:"Cursor on the Window",type:"danger"});
-		});
-		
-		function userCheated() {
-		// The user cheated by leaving this window (e.g opening another window)
-		// Do something
-			conn.send({action:"alert_log",message:"On another tab",type:"danger"});
-		}
-		
-		function userReturn() {
-		// The user cheated by leaving this window (e.g opening another window)
-		// Do something
-		//	conn.send({action:"alert_log",message:"On another tab",type:"danger"});
-			conn.send({action:"alert_log",message:"Returned to Current Tab",type:"danger"});
-		}
-		
-		window.onblur = userCheated;
-		window.onfocus = userReturn;
-	<% } %>
-	
-	
-</script>
 <script>
 var coll = document.getElementsByClassName("collapsible");
 var fr=false

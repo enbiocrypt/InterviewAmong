@@ -181,6 +181,14 @@ app.get('/:pop',(req,res) => {
 	//res.sendFile(index);
 });
 
+app.get('/playback_code/:pop',(req,res) => {
+	firebase.database().ref(`sessionIB/${req.params.pop}`).on("value", function(snapshot) {
+		fun = snapshot.val();
+		res.render('playback',{source_code : JSON.stringify(fun.Source_Code)});
+	});
+});
+
+
 app.get('/report/:pop',(req,res) => {
 	req.session.logger=req.params.pop;
 	var lis=[];
@@ -482,6 +490,16 @@ app.post('/save_chat',(req,res) => {
 app.post('/save_problem',(req,res) => {
 	if(req.session.idm && req.session.ptype){
 		firebase.database().ref(`sessionIB/${req.session.idm}/Problem`).set(req.body.message);
+		res.end("Done Saving");
+	}
+	else{
+		res.status(404).end("Unauthorized.. Next-Time your IP will be blacklisted...");
+	}
+});
+
+app.post('/save_SourceCode',(req,res) => {
+	if(req.session.idm && req.session.ptype){
+		firebase.database().ref(`sessionIB/${req.session.idm}/Source_Code`).push({Type:req.session.ptype, Text:req.body.message, Time:req.body.time, Cursor_User:req.body.cur_c, Cursor_Marker:req.body.cur_i, Language : req.body.lang_id});
 		res.end("Done Saving");
 	}
 	else{

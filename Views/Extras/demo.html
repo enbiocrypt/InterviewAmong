@@ -1,0 +1,229 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	
+	<script src="jquery/dist/jquery.min.js"></script>
+	<script src="popper.js/dist/umd/popper.min.js"></script>
+	<script src="bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
+	<script src="@yaireo/tagify/dist/tagify.min.js"></script>
+	<script src="@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+	<link rel="stylesheet" href="@yaireo/tagify/dist/tagify.css">
+	<link type="text/css" rel="stylesheet" href="tail.datetime/css/tail.datetime-default-red.css" />
+	<script src="moment/moment.js"></script>
+	<script type="text/javascript" src="tail.datetime/js/tail.datetime.min.js"></script>
+	<style>
+	.tagify__input{
+		display:flex;
+		min-width:125px;
+	}
+	</style>
+</head>
+<body style="display: grid;place-content: center;background: linear-gradient(to bottom right, #33ccff 0%, #ff99cc 100%);">
+<h2 style="text-align: center;">Admin Portal</h2>
+<div class="dropdown-menu" style="display:block;position:initial;width:50vw">
+  <form class="px-4 py-3" onsubmit="din();return false;"> 
+	<div class="form-group">
+      <label for="IEmail1">Interviewer's Email address</label>
+      <input type="email" class="form-control" id="IEmail1" placeholder="email@example.com">
+    </div>
+    <div class="form-group">
+      <label for="CEmail1">Candidate's Email address</label>
+      <input type="email" class="form-control" id="CEmail1" placeholder="email@example.com">
+    </div>
+	<div class="form-group">
+      <label>Add Candidate's SkillSet</label>
+      <input id="SCan" name="input" class="some_class_name" placeholder="write some tags" value="css, html, javascript, css" data-blacklist=".NET,PHP"/>
+	  <button class="tags--removeAllBtn" type="button">Remove all these tags ⬆</button>
+    </div>
+	<div class="form-group">
+		<label>Schedule Time and Date</label>
+		<input type="text" class="form-control" id="uiv" placeholder="Select Date" disabled>
+		<div class="tail-datetime-field"></div>
+		<input type="text" class="form-control" id="viv" placeholder="Select Time" disabled>
+		<div class="tail-datetime-field1"></div>
+	</div>
+    <div class="form-group">
+      <label for="CJobDesc">Job Discription</label>
+      <input type="text" class="form-control" id="CJobDesc" placeholder="Job Discription">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Form</button>
+  </form>
+</div>
+<!--
+<table>
+	<tr>
+		<td>Eve</td>
+		<td><input name="input" class="some_class_name" placeholder="write some tags" value="css, html, javascript, css" data-blacklist=".NET,PHP"/></td>
+	</tr>
+	<tr>
+		<td>Eve</td>
+		<td><button class="tags--removeAllBtn" type="button">Remove all these tags ⬆</button></td>
+	</tr>
+</table> -->
+</body>
+<script>
+		var input = document.querySelector('input[name=input]'),
+    whitelist = ["A# .NET", "A# (Axiom)", "A-0 System", "A+", "A++", "ABAP", "ABC", "ABC ALGOL", "ABSET", "ABSYS", "ACC", "Accent", "Ace DASL", "ACL2", "Avicsoft", "ACT-III", "Action!", "ActionScript", "Ada", "Adenine", "Agda", "Agilent VEE", "Agora", "AIMMS", "Alef", "ALF", "ALGOL 58", "ALGOL 60", "ALGOL 68", "ALGOL W", "Alice", "Alma-0", "AmbientTalk", "Amiga E", "AMOS", "AMPL", "Apex (Salesforce.com)", "APL", "AppleScript", "Arc", "ARexx", "Argus", "AspectJ", "Assembly language", "ATS", "Ateji PX", "AutoHotkey", "Autocoder", "AutoIt", "AutoLISP / Visual LISP", "Averest", "AWK", "Axum", "Active Server Pages", "ASP.NET", "B", "Babbage", "Bash", "BASIC", "bc", "BCPL", "BeanShell", "Batch (Windows/Dos)", "Bertrand", "BETA", "Bigwig", "Bistro", "BitC", "BLISS", "Blockly", "BlooP", "Blue", "Boo", "Boomerang", "Bourne shell (including bash and ksh)", "BREW", "BPEL", "B", "C--", "C++ – ISO/IEC 14882", "C# – ISO/IEC 23270", "C/AL", "Caché ObjectScript", "C Shell", "Caml", "Cayenne", "CDuce", "Cecil", "Cesil", "Céu", "Ceylon", "CFEngine", "CFML", "Cg", "Ch", "Chapel", "Charity", "Charm", "Chef", "CHILL", "CHIP-8", "chomski", "ChucK", "CICS", "Cilk", "Citrine (programming language)", "CL (IBM)", "Claire", "Clarion", "Clean", "Clipper", "CLIPS", "CLIST", "Clojure", "CLU", "CMS-2", "COBOL – ISO/IEC 1989", "CobolScript – COBOL Scripting language", "Cobra", "CODE", "CoffeeScript", "ColdFusion", "COMAL", "Combined Programming Language (CPL)", "COMIT", "Common Intermediate Language (CIL)", "Common Lisp (also known as CL)", "COMPASS", "Component Pascal", "Constraint Handling Rules (CHR)", "COMTRAN", "Converge", "Cool", "Coq", "Coral 66", "Corn", "CorVision", "COWSEL", "CPL", "CPL", "Cryptol", "csh", "Csound", "CSP", "CUDA", "Curl", "Curry", "Cybil", "Cyclone", "Cython", "Java", "Javascript", "M2001", "M4", "M#", "Machine code", "MAD (Michigan Algorithm Decoder)", "MAD/I", "Magik", "Magma", "make", "Maple", "MAPPER now part of BIS", "MARK-IV now VISION:BUILDER", "Mary", "MASM Microsoft Assembly x86", "MATH-MATIC", "Mathematica", "MATLAB", "Maxima (see also Macsyma)", "Max (Max Msp – Graphical Programming Environment)", "Maya (MEL)", "MDL", "Mercury", "Mesa", "Metafont", "Microcode", "MicroScript", "MIIS", "Milk (programming language)", "MIMIC", "Mirah", "Miranda", "MIVA Script", "ML", "Model 204", "Modelica", "Modula", "Modula-2", "Modula-3", "Mohol", "MOO", "Mortran", "Mouse", "MPD", "Mathcad", "MSIL – deprecated name for CIL", "MSL", "MUMPS", "Mystic Programming L"],
+
+    // init Tagify script on the above inputs
+    tagify = new Tagify(input, {
+        // after 2 characters typed, all matching values from this list will be suggested in a dropdown
+        //whitelist: [].concat(whitelist)
+    })
+
+
+// "remove all tags" button event listener
+document.querySelector('.tags--removeAllBtn')
+    .addEventListener('click', tagify.removeAllTags.bind(tagify))
+
+// Chainable event listeners
+tagify.on('add', onAddTag)
+      .on('remove', onRemoveTag)
+      .on('input', onInput)
+      .on('edit', onTagEdit)
+      .on('invalid', onInvalidTag)
+      .on('click', onTagClick)
+      .on('focus', onTagifyFocusBlur)
+      .on('blur', onTagifyFocusBlur)
+      .on('dropdown:hide dropdown:show', e => console.log(e.type))
+      .on('dropdown:select', onDropdownSelect)
+
+var mockAjax = (function mockAjax(){
+    var timeout;
+    return function(duration){
+        clearTimeout(timeout); // abort last request
+        return new Promise(function(resolve, reject){
+            timeout = setTimeout(resolve, duration || 1000, whitelist)
+        })
+    }
+})()
+
+// tag added callback
+function onAddTag(e){
+    console.log("onAddTag: ", e.detail.data.value,e.detail.data.__isValid);
+    console.log("original input value: ", input.value)
+    //tagify.off('add', onAddTag) // exmaple of removing a custom Tagify event
+}
+
+// tag remvoed callback
+function onRemoveTag(e){
+    console.log("onRemoveTag:", e.detail, "tagify instance value:", tagify.value)
+}
+
+// on character(s) added/removed (user is typing/deleting)
+function onInput(e){
+    console.log("onInput: ", e.detail);
+    tagify.settings.whitelist.length = 0; // reset current whitelist
+    tagify.loading(true).dropdown.hide.call(tagify) // show the loader animation
+
+    // get new whitelist from a delayed mocked request (Promise)
+    mockAjax()
+        .then(function(result){
+            // https://stackoverflow.com/q/30640771/104380
+            // replace tagify "whitelist" array values with new values (result)
+            tagify.settings.whitelist.splice(0, result.length, ...result)
+            // render the suggestions dropdown. "newValue" is when "input" event is called while editing a tag
+            tagify.loading(false).dropdown.show.call(tagify, e.detail.value);
+        })
+}
+
+function onTagEdit(e){
+    console.log("onTagEdit: ", e.detail);
+}
+
+// invalid tag added callback
+function onInvalidTag(e){
+    console.log("onInvalidTag: ", e.detail);
+}
+
+// invalid tag added callback
+function onTagClick(e){
+    console.log(e.detail);
+    console.log("onTagClick: ", e.detail);
+}
+
+function onTagifyFocusBlur(e){
+    console.log(e.type, "event fired")
+}
+
+function onDropdownSelect(e){
+    console.log("onDropdownSelect: ", e.detail)
+}
+</script>
+<script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function(){
+			tail.DateTime(".tail-datetime-field", {
+				timeFormat: false,
+				dateFormat: "YYYY-mm-dd",
+				dateStart: moment().format('L'),
+				// Demonstration Values
+				position: ".tail-datetime-field",    // Appends the Calendar to this Container
+				startOpen: true,                   // Directly opens the Calendar Popup
+				stayOpen: true                     // Keeps the Calendar Popup Open
+			});
+			
+			tail.DateTime(".tail-datetime-field1", {
+				dateFormat: false,
+				timeSeconds: false,
+				// Demonstration Values
+				position: ".tail-datetime-field1",    // Appends the Calendar to this Container
+				startOpen: true,                   // Directly opens the Calendar Popup
+				stayOpen: true                     // Keeps the Calendar Popup Open
+			});
+			
+			tail.DateTime(".tail-datetime-field").on("change", function(){
+			document.getElementById("uiv").value=tail.DateTime(".tail-datetime-field").select.toDateString();
+			})
+			tail.DateTime(".tail-datetime-field").on("open", function(){
+				var step_up = document.getElementsByClassName("step-up");
+				var step_down = document.getElementsByClassName("step-down");
+				for(var i=0; i<step_up.length; i++){
+					document.getElementsByClassName("step-up")[i].setAttribute("type","button");
+				}
+				for(var i=0; i<step_down.length; i++){
+					console.log(i);
+					document.getElementsByClassName("step-down")[i].setAttribute("type","button");
+				}
+				document.getElementsByClassName("timepicker-minutes")[0].children[0].removeAttribute("pattern");
+				document.getElementsByClassName("timepicker-hours")[0].children[0].removeAttribute("pattern")
+			})
+            tail.DateTime(".tail-datetime-field1").on("change", function(){
+				tail.DateTime(".tail-datetime-field1").select.setHours(document.getElementsByClassName("timepicker-hours")[0].children[0].value);
+				tail.DateTime(".tail-datetime-field1").select.setMinutes(document.getElementsByClassName("timepicker-minutes")[0].children[0].value);
+				document.getElementById("viv").value=tail.DateTime(".tail-datetime-field1").select.toTimeString();
+			})
+        });
+		
+        </script>
+<script>
+function myFunction(item, index) {
+		tagc.push(item.value);
+	}
+function din(){
+	var iem = document.getElementById("IEmail1").value;
+	var cem = document.getElementById("CEmail1").value;
+	var scan = JSON.parse(document.getElementById("SCan").value);
+	var idate = document.getElementById("uiv").value;
+	var iint = document.getElementById("viv").value;
+	var jdec = document.getElementById("CJobDesc").value;
+	var tagc = []
+	for(var i=0;i<scan.length;i++)
+		tagc.push(scan[i].value)
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", "compile", true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			
+			xhr.onload = function() {
+				if(this.responseText=="Updated" ){
+						alert("Updated");
+					}
+				else{
+						alert("Error Sending, please ReCheck");
+					}
+				}
+	xhr.send(JSON.stringify({IEmail1 : iem, CEmail1 : cem, CTag1 : tagc, Date : idate, Time : init, JobDesc: jdec }));
+	console.log("here: ",iem,cem,tagc,idate,iint,jdec);
+}
+</script>
+</html>

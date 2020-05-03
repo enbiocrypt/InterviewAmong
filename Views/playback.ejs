@@ -1,0 +1,106 @@
+<html>
+<head>
+	<title>IB</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="../jquery/dist/jquery.min.js"></script>
+	<script src="../popper.js/dist/umd/popper.min.js"></script>
+	<script src="../bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="../moment/moment.js"></script>
+	<link rel="stylesheet" href="../bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../three-dots/dist/three-dots.min.css">
+	<script src="../ace/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../ace/ext-language_tools.js"></script>
+	<link rel="stylesheet" href="../css/all.css">
+</head>
+
+<body>
+	<div id="editor">
+	</div>
+	<button type="button" class="btn btn-primary" onclick="loop()" style="border-radius: 15px;"><i class="fa fa-chevron-right"></i> Run</button>
+</body>
+
+<script>
+	var sc_code = <%- source_code %>;
+	var Range = ace.require('ace/range').Range;
+	ace.require("ace/ext/language_tools");
+	window.ep=ace.edit("editor");
+	ep.getSession().setUseWrapMode(true);
+	//ep.setOption("indentedSoftWrap", false);
+	ep.setOptions({
+		indentedSoftWrap:true,
+		enableBasicAutocompletion: true,
+		enableLiveAutocompletion: true
+	});
+	ep.setShowPrintMargin(false);
+	ep.setFontSize(16);
+	ep.setTheme("ace/theme/monokai");
+	//ep.setTheme("ace/theme/clouds");
+	//ep.session.setMode("ace/mode/python");
+	ep.setAutoScrollEditorIntoView(true);
+</script>
+<script>
+	var marker;
+	var marker1;
+	var keys=[];
+	var gone = 0;
+	for (const [key, value] of Object.entries(sc_code)){
+		keys.push(key);
+	}
+	/*function wait(ms){
+		var start = new Date().getTime();
+		var end = start;
+		while(end < start + ms) {
+			end = new Date().getTime();
+		}
+	}
+	function single_it(value){
+			ep.session.setMode(value.Language);
+			ep.setValue(value.Text, 1);
+			if(marker)
+				ep.session.removeMarker(marker);
+			if(marker1)
+				ep.session.removeMarker(marker1);
+			if(value.Type == "Interviewer"){
+				marker = ep.session.addMarker(new Range(value.Cursor_User.row, value.Cursor_User.column, value.Cursor_User.row), "MyCursorClass", "line", true);
+				marker1 = ep.session.addMarker(new Range(value.Cursor_Marker.row, value.Cursor_Marker.col, value.Cursor_Marker.row), "MyCursorClass1", "line", true);
+			}
+			else{
+				marker = ep.session.addMarker(new Range(value.Cursor_User.row, value.Cursor_User.column, value.Cursor_User.row), "MyCursorClass1", "line", true);
+				marker1 = ep.session.addMarker(new Range(value.Cursor_Marker.row, value.Cursor_Marker.col, value.Cursor_Marker.row), "MyCursorClass", "line", true);
+			}
+	}
+	function loop(){
+		while(gone < keys.length){
+			single_it(sc_code[keys[gone++]])
+			wait(1000);
+		}
+	}*/
+	function loop(){
+		gone = 0;
+		var refreshIntervalId = setInterval(function() {
+				if (gone < keys.length) {
+					value = sc_code[keys[gone]]
+					ep.session.setMode(value.Language);
+					ep.setValue(value.Text, 1);
+				if(marker)
+					ep.session.removeMarker(marker);
+				if(marker1)
+					ep.session.removeMarker(marker1);
+				if(value.Type == "Interviewer"){
+					marker = ep.session.addMarker(new Range(value.Cursor_User.row, value.Cursor_User.column, value.Cursor_User.row), "MyCursorClass", "line", true);
+					marker1 = ep.session.addMarker(new Range(value.Cursor_Marker.row, value.Cursor_Marker.col, value.Cursor_Marker.row), "MyCursorClass1", "line", true);
+				}
+				else{
+					marker = ep.session.addMarker(new Range(value.Cursor_User.row, value.Cursor_User.column, value.Cursor_User.row), "MyCursorClass1", "line", true);
+					marker1 = ep.session.addMarker(new Range(value.Cursor_Marker.row, value.Cursor_Marker.col, value.Cursor_Marker.row), "MyCursorClass", "line", true);
+				}
+			} else {
+				clearInterval(refreshIntervalId);
+			}
+			gone++     
+		}, 100);
+	}
+</script>
+</html>
