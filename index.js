@@ -26,25 +26,25 @@ var upload = multer({ storage: storage });
 const sp = require('synchronized-promise')
 const puppeteer = require("puppeteer");
 
-
+//Fill Firebase Config Below
 var firebaseConfig = {
-    apiKey: "AIzaSyB_96JfyrAPKkBYQBYotMG-f3pd0t-smig",
-    authDomain: "elemental-axle-259821.firebaseapp.com",
-    databaseURL: "https://elemental-axle-259821.firebaseio.com",
-    projectId: "elemental-axle-259821",
-    storageBucket: "elemental-axle-259821.appspot.com",
-    messagingSenderId: "1061723107456",
-    appId: "1:1061723107456:web:214359a6c5a94d5d003665",
-    measurementId: "G-GDCWPYLFK0"
+    apiKey: "--smig",
+    authDomain: "elemental-axle-.firebaseapp.com",
+    databaseURL: "https://elemental-axle-.firebaseio.com",
+    projectId: "elemental-axle-",
+    storageBucket: "elemental-axle-.appspot.com",
+    messagingSenderId: "",
+    appId: "1::web:",
+    measurementId: ""
   };
 firebase.initializeApp(firebaseConfig);
 
 /**Primary Server**/
 client  = redis.createClient(6380, 'enbiocrypt.redis.cache.windows.net', 
-        {auth_pass: 'pQANwbSPqEA0rHqOpDznzOhJeb9sqyzWbZLWo6W5oZc=', tls: {servername: 'enbiocrypt.redis.cache.windows.net'}});
+        {auth_pass: '=', tls: {servername: 'enbiocrypt.redis.cache.windows.net'}});
 /**Secondary Server**/
 /*client  = redis.createClient(6380, 'ebc.redis.cache.windows.net', 
-        {auth_pass: 'vsqj77ntGNLSaMnRcPqR8nfX71VMb33En36QIwajpM8=', tls: {servername: 'ebc.redis.cache.windows.net'}});*/
+        {auth_pass: '=', tls: {servername: 'ebc.redis.cache.windows.net'}});*/
 
 const sslop = {
 		key: fs.readFileSync(__dirname+'/Public/cert/private.key'),
@@ -56,7 +56,7 @@ var options = {
 	ssl: sslop
 };
 
-var dbx = new Dropbox({ accessToken: 'bmj33lNaLoAAAAAAAAAAzPIn88dJEcC5CF3YSfu_sHf6DxT6ACbzTAJqVqZHl4n_', fetch: fetch});
+var dbx = new Dropbox({ accessToken: '', fetch: fetch});
 var port = process.env.PORT || 3000;
 app.set('view engine','ejs');
 app.use(bodyParser.json());      
@@ -103,9 +103,9 @@ app.post('/main_admin_login', (req,res) => {
   password = req.body.password
   var mysql = require('mysql');
   /**Server**/
-  var con= mysql.createConnection({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "newfeedbackdb", port: 3306});
+  var con= mysql.createConnection({host: "enbiocrypt.mysql.database.azure.com", user: "", password: "", database: "newfeedbackdb", port: 3306});
   /**localhost**/
-  //var con= mysql.createConnection({host: "localhost", user: "root", password: "", database: "newfeedbackdb"});
+  //var con= mysql.createConnection({host: "localhost", user: "root", password: "", database: ""});
   con.connect(function(err) {
     if (err) throw err;
     con.query(`select userid FROM mainadmin WHERE userid="${userid}" AND password="${password}"`, function (err, result, fields) {
@@ -147,7 +147,7 @@ app.get('/admin_portal',(req,res) => {
 
 app.get('/:pop',(req,res) => {
 	/**Server**/
-	var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+	var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "", password: "", database: "ibdb", port: 3306});
 	/**Localhost**/
 	//var connection = new MySql({host: "localhost", user: "root", password: "", database: "ibdb"});
 	quer = 'select * from interdemo where sno="'+req.params.pop+'"';
@@ -199,7 +199,7 @@ app.get('/report/:pop',(req,res) => {
 			//dbx.filesDownload({path:item.path_display}).then(function(response){lis.push([response.name,response.fileBinary]);}).catch(function(err){console.log(err);});
 	}
 	/**Server**/
-	//var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+	//var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "", password: "", database: "ibdb", port: 3306});
 	/**Localhost**/
 	//var connection = new MySql({host: "localhost", user: "root", password: "", database: "ibdb"});
 	var fun;
@@ -232,7 +232,7 @@ app.get('/report1/:pop',(req,res) => {
 			//dbx.filesDownload({path:item.path_display}).then(function(response){lis.push([response.name,response.fileBinary]);}).catch(function(err){console.log(err);});
 	}
 	/**Server**/
-	//var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+	//var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "", password: "", database: "ibdb", port: 3306});
 	/**Localhost**/
 	//var connection = new MySql({host: "localhost", user: "root", password: "", database: "ibdb"});
 	var fun;
@@ -269,7 +269,7 @@ app.post('/report_files',(req,res) => {
 app.post('/send',(req,res) => {
 	if(req.session.mainadmin){
 		/**Server**/
-		var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "enbiocrypt@enbiocrypt", password: "25aprial1998QQ!!", database: "ibdb", port: 3306});
+		var connection = new MySql({host: "enbiocrypt.mysql.database.azure.com", user: "", password: "", database: "ibdb", port: 3306});
 		/**localhost**/
 		//var connection = new MySql({host: "localhost", user: "root", password: "", database: "ibdb"});
 		var itemp=md5(md5(req.body.CEmail1)+md5(moment().format('LTS')));
